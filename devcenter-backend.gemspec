@@ -14,4 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "devcenter-backend"
   gem.require_paths = ["lib"]
   gem.version       = Devcenter::Backend::VERSION
+
+  gem.add_dependency 'grape', '0.2.0'
+  gem.add_dependency 'json', '1.7.4'
 end
