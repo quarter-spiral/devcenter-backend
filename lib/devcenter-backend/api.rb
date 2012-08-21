@@ -7,6 +7,23 @@ module Devcenter::Backend
     format :json
     default_format :json
 
+    rescue_from Devcenter::Backend::Error
     error_format :json
+
+    helpers do
+      def connection
+        @connection ||= Connection.create
+      end
+
+          end
+
+    post '/developers/:uuid' do
+      connection.graph.add_role(params[:uuid], 'developer')
+      ''
+    end
+
+    post '/games' do
+      Game.create(params).to_hash
+    end
   end
 end
