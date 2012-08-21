@@ -24,4 +24,8 @@ group :development, :test do
   gem 'rack-test'
   gem 'rake'
   gem 'uuid'
+
+  platforms :rbx do
+    gem 'bson_ext'
+  end
 end
