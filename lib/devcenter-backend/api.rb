@@ -58,7 +58,7 @@ module Devcenter::Backend
         game.name = params[:name] if params[:name]
         game.description = params[:description] if params[:description]
         game.screenshots = params[:screenshots] if params[:screenshots]
-        game.configuration = params[:configuration] if params[:configuration]
+        game.configuration = params[:configuration].to_hash if params[:configuration]
         if params[:developers]
           error!("Can't create game with this developer list!", 403) unless game.adjust_developers(params[:developers])
         end
