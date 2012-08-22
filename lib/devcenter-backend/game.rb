@@ -1,14 +1,17 @@
 module Devcenter::Backend
   class Game
-    attr_accessor :uuid
+    attr_accessor :uuid, :name, :description
+    attr_writer :configuration, :screenshots
 
     def self.create(params)
-      raise Error.new("You must specify at least one developer!") if params[:developers].empty?
-
       game = new(params)
 
-      game.uuid = connection.datastore.create(:public, game.to_hash)
-      unless game.add_developers(params[:developers])
+      ensure_enough_developers!(params)
+      ensure_game_is_valid!(game)
+
+      game.uuid = connection.datastore.create(:public, {'game' => game.to_hash(no_graph: true)})
+      game.save
+      unless game.adjust_developers(params[:developers])
         game.destroy
         raise Error.new("Can't create game with this developer list!")
       end
@@ -16,41 +19,74 @@ module Devcenter::Backend
       game
     end
 
-    def initialize(params)
+    def initialize(params = {})
+      @name = params['name']
+      @description = params['description']
+      @configuration = params['configuration']
+      @screenshots = params['screenshots']
     end
 
     def destroy
-      self.class.connection.datastore.set(:public, uuid, {})
+      connection = self.class.connection
+      connection.datastore.set(:public, uuid, {})
+      connection.graph.delete_entity(uuid)
     end
 
-    def to_hash
-      {uuid: uuid}
+    def to_hash(options = {})
+      hash = {uuid: uuid, name: name, description: description, configuration: configuration, screenshots: screenshots}
+      hash[:developers] = developers unless options[:no_graph]
+      hash
     end
 
-    def add_developers(developers)
-      added_developers = []
-      developers.each do |developer|
-        begin
-          self.class.connection.graph.add_relationship(developer, uuid, 'develops')
-        rescue Service::Client::ServiceError => e
-          if e.error =~ /^Relation:.*is invalid!$/
-            added_developers.each {|added_developer| remove_developer(added_developer)}
-            return false
-          end
-          raise e
-        end
-        added_developers << developer
+    def adjust_developers(new_developers)
+      old_developers = developers.clone
+      graph = self.class.connection.graph
+      developers_to_create = new_developers - old_developers
+      developers_to_delete = old_developers - new_developers
+      new_developers.each do |developer|
+        graph.add_relationship(developer, uuid, 'develops')
       end
-      true
+      developers_to_delete.each do |developer|
+        graph.remove_relationship(developer, uuid, 'develops')
+      end
+    rescue Service::Client::ServiceError => e
+      adjust_developers(old_developers) and return false if e.error =~ /^Relation:.*is invalid!$/
+      raise e
     end
 
-    def remove_developer(developer)
-      self.class.connection.remove_relationship(developer, uuid, 'develops')
+    def valid?
+      name.to_s !~ /^\s*$/ && description.to_s !~ /^\s*$/
+    end
+
+    def save
+      self.class.ensure_game_is_valid!(self)
+      self.class.connection.datastore.set(:public, uuid, {'game' => to_hash(no_graph: true)})
+    end
+
+    def developers
+      return [] unless uuid
+      self.class.connection.graph.list_related_entities(uuid, 'develops', direction: 'incoming')
+    end
+
+    def configuration
+      @configuration || {}
+    end
+
+    def screenshots
+      @screenshots || []
     end
 
     protected
     def self.connection
       @connection ||= Connection.create
+    end
+
+    def self.ensure_enough_developers!(params)
+      raise Error.new("Games must have at least one developer!") if !params[:developers] || params[:developers].empty?
+    end
+
+    def self.ensure_game_is_valid!(game)
+      raise Error.new("Games must have a name and a description!") unless game.valid?
     end
   end
 end
