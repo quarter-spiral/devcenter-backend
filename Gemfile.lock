@@ -1,0 +1,132 @@
+GIT
+  remote: git@github.com:quarter-spiral/datastore-backend.git
+  revision: 3781f3adfc6c6cf3ce7f7e5494992123f0ad29a2
+  tag: release-0.0.4
+  specs:
+    datastore-backend (0.0.4)
+      grape (= 0.2.0)
+      json (= 1.7.4)
+      mongoid (= 2.4.11)
+      rack-jsonp-middleware (= 0.0.5)
+
+GIT
+  remote: git@github.com:quarter-spiral/datastore-client.git
+  revision: f32272543ee156a77d4095949981caf957b283c6
+  tag: release-0.0.2
+  specs:
+    datastore-client (0.0.2)
+      json
+
+GIT
+  remote: git@github.com:quarter-spiral/graph-backend.git
+  revision: 3b44a7e68fd536b26862deee54099ce62f1344a6
+  tag: release-0.0.3
+  specs:
+    graph-backend (0.0.3)
+      grape (= 0.2.0)
+      json (= 1.7.4)
+      neography (= 0.0.29)
+
+GIT
+  remote: git@github.com:quarter-spiral/graph-client.git
+  revision: 01b937ae00af125b4706a9763935bdfc0d26e795
+  tag: release-0.0.2
+  specs:
+    graph-client (0.0.2)
+
+GIT
+  remote: git@github.com:quarter-spiral/service-client.git
+  revision: cb6174a1431ed362bb4d53e366f26b7356eba850
+  tag: release-0.0.4
+  specs:
+    service-client (0.0.4)
+      faraday (= 0.8.1)
+      json
+
+PATH
+  remote: .
+  specs:
+    devcenter-backend (0.0.1)
+      grape (= 0.2.0)
+      json (= 1.7.4)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activemodel (3.2.8)
+      activesupport (= 3.2.8)
+      builder (~> 3.0.0)
+    activesupport (3.2.8)
+      i18n (~> 0.6)
+      multi_json (~> 1.0)
+    bson (1.6.4)
+    bson (1.6.4-java)
+    bson_ext (1.6.4)
+      bson (~> 1.6.4)
+    builder (3.0.0)
+    faraday (0.8.1)
+      multipart-post (~> 1.1)
+    grape (0.2.0)
+      hashie (~> 1.2)
+      multi_json
+      multi_xml
+      rack
+      rack-mount
+    hashie (1.2.0)
+    httparty (0.8.3)
+      multi_json (~> 1.0)
+      multi_xml
+    i18n (0.6.0)
+    json (1.7.4)
+    json (1.7.4-java)
+    macaddr (1.6.1)
+      systemu (~> 2.5.0)
+    mongo (1.6.2)
+      bson (~> 1.6.2)
+    mongoid (2.4.11)
+      activemodel (~> 3.1)
+      mongo (<= 1.6.2)
+      tzinfo (~> 0.3.22)
+    multi_json (1.3.6)
+    multi_xml (0.5.1)
+    multipart-post (1.1.5)
+    neography (0.0.29)
+      httparty (>= 0.8.1)
+      json
+      multi_json
+      os
+      rake (>= 0.8.7)
+      rubyzip
+    os (0.9.6)
+    rack (1.4.1)
+    rack-client (0.4.0)
+      rack (>= 1.0.0)
+    rack-jsonp-middleware (0.0.5)
+      rack
+    rack-mount (0.8.3)
+      rack (>= 1.0.0)
+    rack-test (0.6.1)
+      rack (>= 1.0)
+    rake (0.9.2.2)
+    rubyzip (0.9.9)
+    systemu (2.5.2)
+    tzinfo (0.3.33)
+    uuid (2.3.5)
+      macaddr (~> 1.0)
+
+PLATFORMS
+  java
+  ruby
+
+DEPENDENCIES
+  bson_ext
+  datastore-backend!
+  datastore-client!
+  devcenter-backend!
+  graph-backend!
+  graph-client!
+  rack-client
+  rack-test
+  rake
+  service-client!
+  uuid
