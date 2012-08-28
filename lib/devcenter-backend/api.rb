@@ -24,6 +24,18 @@ module Devcenter::Backend
       end
     end
 
+    before do
+      header('Access-Control-Allow-Origin', '*')
+    end
+
+
+    options '*path' do
+      header('Access-Control-Allow-Headers', 'origin, x-requested-with, content-type, accept')
+      header('Access-Control-Allow-Methods', 'GET, PUT,OPTIONS, POST, DELETE')
+      header('Access-Control-Max-Age', '1728000')
+      ""
+    end
+
     namespace '/developers' do
       post '/:uuid' do
         connection.graph.add_role(params[:uuid], 'developer')
