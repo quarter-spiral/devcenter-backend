@@ -78,9 +78,10 @@ JSON encoded options hash.
 
 - **name** [REQUIRED]: Name of the game
 - **description** [REQUIRED]: Text describing the game
+- **configuration** [REQUIRED]: Hash that describes the game. Must include the key ``type`` which can be either ``html5`` or ``flash``.
 - **developers** [REQUIRED]: Array of UUIDs of the developers of this game
 - **screenshots** [OPTIONAL]: Array of image URLs of screenshots of the game
-- **configuration** [OPTIONAL]: Hash of arbitrary data you want to store along with the game
+- **developer_configuration** [OPTIONAL]: Hash of arbitrary data you want to store along with the game
 
 #### Response
 
@@ -126,9 +127,11 @@ JSON encoded options hash.
 
 - **name** [OPTIONAL]: Name of the game
 - **description** [OPTIONAL]: Text describing the game
+- **configuration** [REQUIRED]: Hash that describes the game. See [Game
+  Types](#game-types) for more information.
 - **developers** [OPTIONAL]: Array of UUIDs of the developers of this game
 - **screenshots** [OPTIONAL]: Array of image URLs of screenshots of the game
-- **configuration** [OPTIONAL]: Hash of arbitrary data you want to store along with the game
+- **developer_configuration** [OPTIONAL]: Hash of arbitrary data you want to store along with the game
 
 Every option that is not present at all in the request will remain unchanged.
 
@@ -142,9 +145,10 @@ JSON encoded hash of the game's configuration. Example:
 {
   "name": "Nonsense's Tale",
   "description": "Rumble your way to the treasures of Cpt. McDoodle and his crew. Fight parrots, barrels and pirates!",
+  "configuration": {"type": "html5", "url": "http://example.com/game"},
   "developers": ["eb6d96b0-cb55-012f-4393-58b035f5cdfb", "ebc08260-cb55-012f-4394-58b035f5cdfb"],
   "screenshots": ["http://example.com/nonsense/1.jpg", "http://example.com/nonsense/2.jpg"],
-  "configuration": {"background": "red", "musicTheme": "caribbean"}
+  "developer_configuration": {"background": "red", "musicTheme": "caribbean"}
 }
 ```
 Note that no matter which options you passed in through the request, the response will always contain the whole configuration.
@@ -168,3 +172,19 @@ Empty.
 ##### Body
 
 JSON encoded hash of the game's configuration. See ``Change a game's configuration`` response section for an example payload.
+
+## Additional Info
+
+### Game Types
+
+Currently supported game types are
+
+#### HTML5
+
+Configuration example:
+
+```javascript
+{"type": "html5", "url": "http://example.com/game"}
+```
+
+The ``type`` and ``url`` keys are mandatory.

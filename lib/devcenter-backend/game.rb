@@ -1,7 +1,7 @@
 module Devcenter::Backend
   class Game
     attr_accessor :uuid, :name, :description
-    attr_writer :configuration, :screenshots
+    attr_writer :configuration, :screenshots, :developer_configuration
 
     def self.create(params)
       game = new(params)
@@ -22,8 +22,9 @@ module Devcenter::Backend
     def initialize(params = {})
       @name = params['name']
       @description = params['description']
-      @configuration = params['configuration']
+      @configuration = params['configuration'].to_hash if params['configuration']
       @screenshots = params['screenshots']
+      @developer_configuration = params['developer_configuration'].to_hash if params['developer_configuration']
     end
 
     def destroy
@@ -33,7 +34,7 @@ module Devcenter::Backend
     end
 
     def to_hash(options = {})
-      hash = {uuid: uuid, name: name, description: description, configuration: configuration, screenshots: screenshots}
+      hash = {uuid: uuid, name: name, description: description, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration}
       hash[:developers] = developers unless options[:no_graph]
       hash
     end
@@ -55,7 +56,8 @@ module Devcenter::Backend
     end
 
     def valid?
-      name.to_s !~ /^\s*$/ && description.to_s !~ /^\s*$/
+      raise ValidationError.new("Games must have a name and a description!") unless name.to_s !~ /^\s*$/ && description.to_s !~ /^\s*$/
+      raise ValidationError.new("Game configuration invalid!") unless GameType.valid?(configuration)
     end
 
     def save
@@ -72,6 +74,10 @@ module Devcenter::Backend
       @configuration || {}
     end
 
+    def developer_configuration
+      @developer_configuration || {}
+    end
+
     def screenshots
       @screenshots || []
     end
@@ -86,7 +92,8 @@ module Devcenter::Backend
     end
 
     def self.ensure_game_is_valid!(game)
-      raise Error.new("Games must have a name and a description!") unless game.valid?
+      # game validation raises errors from within itself
+      game.valid?
     end
   end
 end

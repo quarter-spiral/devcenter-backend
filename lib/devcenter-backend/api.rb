@@ -8,6 +8,7 @@ module Devcenter::Backend
     default_format :json
 
     rescue_from Devcenter::Backend::Error
+    rescue_from Devcenter::Backend::ValidationError
     error_format :json
 
     helpers do
@@ -71,9 +72,12 @@ module Devcenter::Backend
         game.description = params[:description] if params[:description]
         game.screenshots = params[:screenshots] if params[:screenshots]
         game.configuration = params[:configuration].to_hash if params[:configuration]
+        game.developer_configuration = params[:developer_configuration].to_hash if params[:developer_configuration]
+
         if params[:developers]
           error!("Can't create game with this developer list!", 403) unless game.adjust_developers(params[:developers])
         end
+
         game.save
         game.to_hash
       end
