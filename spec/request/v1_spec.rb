@@ -115,6 +115,20 @@ describe Devcenter::Backend::API do
       response = client.post "/v1/games", {}, JSON.dump(@game.merge(configuration: {type: 'html5', url: "http://example.com/game"}))
       response.status.must_equal 201
     end
+
+    it "allows flash games with a url" do
+      response = client.post "/v1/games", {}, JSON.dump(@game.merge(configuration: {type: "flash"}))
+      response.status.wont_equal 201
+
+      response = client.post "/v1/games", {}, JSON.dump(@game.merge(configuration: {url: "http://example.com/game.swf"}))
+      response.status.wont_equal 201
+
+      response = client.post "/v1/games", {}, JSON.dump(@game.merge(configuration: {type: 'flash', url: ""}))
+      response.status.wont_equal 201
+
+      response = client.post "/v1/games", {}, JSON.dump(@game.merge(configuration: {type: 'flash', url: "http://example.com/game.swf"}))
+      response.status.must_equal 201
+    end
   end
 
   it "can list games of a developer" do

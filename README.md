@@ -188,3 +188,14 @@ Configuration example:
 ```
 
 The ``type`` and ``url`` keys are mandatory.
+
+#### Flash
+
+Configuration example:
+
+```javascript
+{"type": "flash", "url": "http://example.com/game.swf"}
+```
+
+The ``type`` and ``url`` keys are mandatory. ``url`` is pointing to a
+SWF flash file.

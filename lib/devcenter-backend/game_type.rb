@@ -1,5 +1,6 @@
 require 'devcenter-backend/game_type/base'
 require 'devcenter-backend/game_type/html5'
+require 'devcenter-backend/game_type/flash'
 
 module Devcenter::Backend
   module GameType
