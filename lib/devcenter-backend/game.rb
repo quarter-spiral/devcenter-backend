@@ -44,7 +44,8 @@ module Devcenter::Backend
       graph = self.class.connection.graph
       developers_to_create = new_developers - old_developers
       developers_to_delete = old_developers - new_developers
-      new_developers.each do |developer|
+
+      developers_to_create.each do |developer|
         graph.add_relationship(developer, uuid, 'develops')
       end
       developers_to_delete.each do |developer|

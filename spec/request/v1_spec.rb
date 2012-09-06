@@ -259,4 +259,21 @@ describe Devcenter::Backend::API do
     response = client.get "/v1/developers/#{@entity3}/games"
     JSON.parse(response.body).must_include game
   end
+
+  it "can remove developers" do
+    client.post "/v1/developers/#{@entity1}"
+    client.post "/v1/developers/#{@entity2}"
+
+    game_data = {name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"}}
+    response = client.post "/v1/games", {}, JSON.dump(game_data)
+    game = JSON.parse(response.body)['uuid']
+
+    dev_data = game_data.clone
+    dev_data[:developers] = [@entity1]
+    client.put "/v1/games/#{game}", {}, JSON.dump(dev_data)
+
+    response = client.get "/v1/games/#{game}"
+    config = JSON.parse(response.body)
+    config['developers'].must_equal [@entity1]
+  end
 end
