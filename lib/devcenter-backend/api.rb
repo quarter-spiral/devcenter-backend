@@ -58,6 +58,22 @@ module Devcenter::Backend
         Game.create(params).to_hash
       end
 
+      post '/:uuid/developers/:developer_uuid' do
+        uuid = params[:uuid]
+        game = get_game(uuid)
+        game.add_developer(params[:developer_uuid])
+
+        game.to_hash
+      end
+
+      delete '/:uuid/developers/:developer_uuid' do
+        uuid = params[:uuid]
+        game = get_game(uuid)
+        game.remove_developer(params[:developer_uuid])
+
+        game.to_hash
+      end
+
       get '/:uuid' do
         uuid = params[:uuid]
         game = get_game(uuid)

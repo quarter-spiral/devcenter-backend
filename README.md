@@ -89,6 +89,53 @@ JSON encoded options hash.
 
 JSON encoded hash containing the UUID of the newly created game. Example: ``{"uuid": "eb798e00-cb53-012f-4392-58b035f5cdfb"}``
 
+### Adding a developer to a game
+
+#### Request
+
+**POST** ``/games/:GAME-UUID:/developers/:DEVELOPER-UUID:``
+
+##### Parameters
+
+- **GAME-UUID** [REQUIRED]: The UUID of the game you want to add the developer to
+- **DEVELOPER-UUID** [REQUIRED]: The UUID of the developer you want to add to
+  the game
+
+##### Body
+
+Empty.
+
+#### Response
+
+##### Body
+
+JSON encoded hash of the game's configuration. See ``Changing a game``
+for an example.
+
+### Removing a developer from a game
+
+#### Request
+
+**DELETE** ``/games/:GAME-UUID:/developers/:DEVELOPER-UUID:``
+
+##### Parameters
+
+- **GAME-UUID** [REQUIRED]: The UUID of the game you want to add the developer to
+- **DEVELOPER-UUID** [REQUIRED]: The UUID of the developer you want to add to
+  the game
+
+##### Body
+
+Empty.
+
+#### Response
+
+##### Body
+
+JSON encoded hash of the game's configuration. See ``Changing a game``
+for an example.
+
+
 ### Deleting a game
 
 Deleting a game will also remove all developers from this game (relations from developers to the game will be removed, not the developers themselves).

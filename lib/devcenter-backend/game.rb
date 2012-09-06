@@ -41,19 +41,26 @@ module Devcenter::Backend
 
     def adjust_developers(new_developers)
       old_developers = developers.clone
-      graph = self.class.connection.graph
       developers_to_create = new_developers - old_developers
       developers_to_delete = old_developers - new_developers
 
       developers_to_create.each do |developer|
-        graph.add_relationship(developer, uuid, 'develops')
+        add_developer(developer)
       end
       developers_to_delete.each do |developer|
-        graph.remove_relationship(developer, uuid, 'develops')
+        remove_developer(developer)
       end
     rescue Service::Client::ServiceError => e
       adjust_developers(old_developers) and return false if e.error =~ /^Relation:.*is invalid!$/
       raise e
+    end
+
+    def add_developer(developer)
+      self.class.connection.graph.add_relationship(developer, uuid, 'develops')
+    end
+
+    def remove_developer(developer)
+      self.class.connection.graph.remove_relationship(developer, uuid, 'develops')
     end
 
     def valid?
