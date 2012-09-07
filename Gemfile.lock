@@ -1,20 +1,21 @@
 GIT
   remote: git@github.com:quarter-spiral/datastore-backend.git
-  revision: 3781f3adfc6c6cf3ce7f7e5494992123f0ad29a2
-  tag: release-0.0.4
+  revision: 52ff89cf30c42847bc79461db6c7e924eac22b18
+  tag: release-0.0.5
   specs:
-    datastore-backend (0.0.4)
+    datastore-backend (0.0.5)
       grape (= 0.2.0)
       json (= 1.7.4)
       mongoid (= 2.4.11)
       rack-jsonp-middleware (= 0.0.5)
+      uuid
 
 GIT
   remote: git@github.com:quarter-spiral/datastore-client.git
-  revision: f32272543ee156a77d4095949981caf957b283c6
-  tag: release-0.0.2
+  revision: 9e6e213be996beea0ecd6d878c8e04d5ce899f3f
+  tag: release-0.0.3
   specs:
-    datastore-client (0.0.2)
+    datastore-client (0.0.3)
       json
 
 GIT
@@ -63,7 +64,7 @@ GEM
     bson (1.6.4-java)
     bson_ext (1.6.4)
       bson (~> 1.6.4)
-    builder (3.0.0)
+    builder (3.0.2)
     faraday (0.8.1)
       multipart-post (~> 1.1)
     grape (0.2.0)
@@ -76,7 +77,7 @@ GEM
     httparty (0.8.3)
       multi_json (~> 1.0)
       multi_xml
-    i18n (0.6.0)
+    i18n (0.6.1)
     json (1.7.4)
     json (1.7.4-java)
     macaddr (1.6.1)
