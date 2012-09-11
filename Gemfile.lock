@@ -6,7 +6,6 @@ PATH
       grape (= 0.2.0)
       graph-client (= 0.0.3)
       json (= 1.7.4)
-      service-client (= 0.0.4)
 
 GEM
   remote: https://rubygems.org/
