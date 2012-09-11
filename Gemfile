@@ -1,5 +1,8 @@
 source 'https://rubygems.org'
-source "https://user:#{ENV['QS_GEMS_PASSWORD']}@privategems.herokuapp.com/"
+
+private_source = "https://user:#{ENV['QS_GEMS_PASSWORD']}@privategems.herokuapp.com/"
+puts "Source: #{private_source}"
+source private_source
 
 # Specify your gem's dependencies in devcenter-backend.gemspec
 gemspec

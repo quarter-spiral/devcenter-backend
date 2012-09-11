@@ -1,3 +1,7 @@
+# 0.0.4
+
+* Moves gem dependencies to the private gem server
+
 # 0.0.3
 
 * Bumps the datastore version
