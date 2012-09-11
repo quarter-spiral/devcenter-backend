@@ -1,3 +1,9 @@
+# 0.0.6
+
+* Removes service-client as an explicit dependency as it is now
+  automatically resolved through the datastore-client and graph-client
+dependencies.
+
 # 0.0.5
 
 * Moves private gem server credentials to the Gemfile to make it
@@ -18,4 +24,3 @@
 # 0.0.1
 
 The start.
-
