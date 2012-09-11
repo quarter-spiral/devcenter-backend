@@ -1,58 +1,16 @@
-GIT
-  remote: git@github.com:quarter-spiral/datastore-backend.git
-  revision: 52ff89cf30c42847bc79461db6c7e924eac22b18
-  tag: release-0.0.5
-  specs:
-    datastore-backend (0.0.5)
-      grape (= 0.2.0)
-      json (= 1.7.4)
-      mongoid (= 2.4.11)
-      rack-jsonp-middleware (= 0.0.5)
-      uuid
-
-GIT
-  remote: git@github.com:quarter-spiral/datastore-client.git
-  revision: 9e6e213be996beea0ecd6d878c8e04d5ce899f3f
-  tag: release-0.0.3
-  specs:
-    datastore-client (0.0.3)
-      json
-
-GIT
-  remote: git@github.com:quarter-spiral/graph-backend.git
-  revision: 3b44a7e68fd536b26862deee54099ce62f1344a6
-  tag: release-0.0.3
-  specs:
-    graph-backend (0.0.3)
-      grape (= 0.2.0)
-      json (= 1.7.4)
-      neography (= 0.0.29)
-
-GIT
-  remote: git@github.com:quarter-spiral/graph-client.git
-  revision: 01b937ae00af125b4706a9763935bdfc0d26e795
-  tag: release-0.0.2
-  specs:
-    graph-client (0.0.2)
-
-GIT
-  remote: git@github.com:quarter-spiral/service-client.git
-  revision: cb6174a1431ed362bb4d53e366f26b7356eba850
-  tag: release-0.0.4
-  specs:
-    service-client (0.0.4)
-      faraday (= 0.8.1)
-      json
-
 PATH
   remote: .
   specs:
     devcenter-backend (0.0.3)
+      datastore-client (= 0.0.4)
       grape (= 0.2.0)
+      graph-client (= 0.0.3)
       json (= 1.7.4)
+      service-client (= 0.0.4)
 
 GEM
   remote: https://rubygems.org/
+  remote: https://user:We267RFF7BfwVt4LdqFA@privategems.herokuapp.com/
   specs:
     activemodel (3.2.8)
       activesupport (= 3.2.8)
@@ -64,7 +22,17 @@ GEM
     bson (1.6.4-java)
     bson_ext (1.6.4)
       bson (~> 1.6.4)
-    builder (3.0.2)
+    builder (3.0.3)
+    commander (4.1.2)
+      highline (~> 1.6.11)
+    datastore-backend (0.0.5)
+      grape (= 0.2.0)
+      json (= 1.7.4)
+      mongoid (= 2.4.11)
+      rack-jsonp-middleware (= 0.0.5)
+      uuid
+    datastore-client (0.0.4)
+      json
     faraday (0.8.1)
       multipart-post (~> 1.1)
     grape (0.2.0)
@@ -73,8 +41,16 @@ GEM
       multi_xml
       rack
       rack-mount
+    graph-backend (0.0.3)
+      grape (= 0.2.0)
+      json (= 1.7.4)
+      neography (= 0.0.29)
+    graph-client (0.0.3)
+      commander
+      service-client (= 0.0.4)
     hashie (1.2.0)
-    httparty (0.8.3)
+    highline (1.6.14)
+    httparty (0.9.0)
       multi_json (~> 1.0)
       multi_xml
     i18n (0.6.1)
@@ -110,6 +86,9 @@ GEM
       rack (>= 1.0)
     rake (0.9.2.2)
     rubyzip (0.9.9)
+    service-client (0.0.4)
+      faraday (= 0.8.1)
+      json
     systemu (2.5.2)
     tzinfo (0.3.33)
     uuid (2.3.5)
@@ -121,13 +100,10 @@ PLATFORMS
 
 DEPENDENCIES
   bson_ext
-  datastore-backend!
-  datastore-client!
+  datastore-backend (= 0.0.5)
   devcenter-backend!
-  graph-backend!
-  graph-client!
+  graph-backend (= 0.0.3)
   rack-client
   rack-test
   rake
-  service-client!
   uuid

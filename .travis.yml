@@ -11,3 +11,4 @@ source_key: "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBcDh
 services:
   - mongodb
   - neo4j
+env: QS_GEMS_PASSWORD=We267RFF7BfwVt4LdqFA
