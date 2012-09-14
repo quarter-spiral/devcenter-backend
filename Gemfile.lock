@@ -24,6 +24,7 @@ GEM
     builder (3.0.3)
     commander (4.1.2)
       highline (~> 1.6.11)
+    daemons (1.1.9)
     datastore-backend (0.0.5)
       grape (= 0.2.0)
       json (= 1.7.4)
@@ -32,6 +33,7 @@ GEM
       uuid
     datastore-client (0.0.4)
       json
+    eventmachine (1.0.0)
     faraday (0.8.1)
       multipart-post (~> 1.1)
     grape (0.2.0)
@@ -89,6 +91,10 @@ GEM
       faraday (= 0.8.1)
       json
     systemu (2.5.2)
+    thin (1.4.1)
+      daemons (>= 1.0.9)
+      eventmachine (>= 0.12.6)
+      rack (>= 1.0.0)
     tzinfo (0.3.33)
     uuid (2.3.5)
       macaddr (~> 1.0)
@@ -105,4 +111,5 @@ DEPENDENCIES
   rack-client
   rack-test
   rake
+  thin
   uuid
