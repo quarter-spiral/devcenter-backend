@@ -19,7 +19,10 @@ group :development, :test do
   gem 'rack-test'
   gem 'rake'
   gem 'uuid'
-  gem 'thin'
+
+  platforms :ruby do
+    gem 'thin'
+  end
 
   platforms :rbx do
     gem 'bson_ext'
