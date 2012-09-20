@@ -2,9 +2,10 @@ module Devcenter::Backend
   class Game
     attr_accessor :uuid, :name, :description
     attr_writer :configuration, :screenshots, :developer_configuration
+    attr_reader :original_attributes
 
     def self.create(params)
-      game = new(params)
+      game = new(params.merge(new_game: true))
 
       ensure_enough_developers!(params)
       ensure_game_is_valid!(game)
@@ -16,6 +17,7 @@ module Devcenter::Backend
         raise Error.new("Can't create game with this developer list!")
       end
       connection.graph.add_role(game.uuid, 'game')
+      game.mark_as_saved!
       game
     end
 
@@ -25,6 +27,9 @@ module Devcenter::Backend
       @configuration = params['configuration'].to_hash if params['configuration']
       @screenshots = params['screenshots']
       @developer_configuration = params['developer_configuration'].to_hash if params['developer_configuration']
+      @new_game = params[:new_game]
+
+      @original_attributes = to_hash
     end
 
     def destroy
@@ -65,7 +70,15 @@ module Devcenter::Backend
 
     def valid?
       raise ValidationError.new("Games must have a name and a description!") unless name.to_s !~ /^\s*$/ && description.to_s !~ /^\s*$/
-      raise ValidationError.new("Game configuration invalid!") unless GameType.valid?(configuration)
+      raise ValidationError.new("Game configuration invalid!") unless GameType.valid?(self)
+    end
+
+    def new_game?
+      @new_game
+    end
+
+    def mark_as_saved!
+      @new_game = false
     end
 
     def save

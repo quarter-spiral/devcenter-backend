@@ -1,8 +1,10 @@
 module Devcenter::Backend
   module GameType
     class Base
-      def initialize(configuration)
-        @configuration = configuration
+      attr_reader :game
+
+      def initialize(game)
+        @game = game
       end
     end
   end

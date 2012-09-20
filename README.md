@@ -226,6 +226,19 @@ JSON encoded hash of the game's configuration. See ``Change a game's configurati
 
 Currently supported game types are
 
+#### Initial
+
+This type can only be used for newly created games. It's is **not**
+allowed to switch a game from any other game type to ``initial``.
+
+Configuration example:
+
+```javascript
+{"type": "initial"}
+```
+
+The ``type`` key is mandatory.
+
 #### HTML5
 
 Configuration example:

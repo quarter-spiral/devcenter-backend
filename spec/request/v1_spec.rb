@@ -129,6 +129,37 @@ describe Devcenter::Backend::API do
       response = client.post "/v1/games", {}, JSON.dump(@game.merge(configuration: {type: 'flash', url: "http://example.com/game.swf"}))
       response.status.must_equal 201
     end
+
+    describe "initial games" do
+      it "creation" do
+        response = client.post "/v1/games", {}, JSON.dump(@game.merge(configuration: {type: "initial"}))
+        response.status.must_equal 201
+      end
+
+      it "does not allow to change a game type back to initial" do
+        response = client.post "/v1/games", {}, JSON.dump(@game.merge(configuration: {type: 'flash', url: "http://example.com/game.swf"}))
+        game = JSON.parse(response.body)['uuid']
+
+        response = client.put "/v1/games/#{game}", {}, JSON.dump(configuration: {type: 'initial'})
+        response.status.wont_equal 200
+
+        config = JSON.parse(client.get("/v1/games/#{game}").body)
+        config['configuration']['type'].must_equal 'flash'
+        config['configuration']['url'].must_equal 'http://example.com/game.swf'
+      end
+
+      it "can stay with the initial game type" do
+        response = client.post "/v1/games", {}, JSON.dump(@game.merge(configuration: {type: 'initial'}))
+        game = JSON.parse(response.body)['uuid']
+
+        response = client.put "/v1/games/#{game}", {}, JSON.dump(name: 'updated', configuration: {type: 'initial'})
+        response.status.must_equal 200
+
+        config = JSON.parse(client.get("/v1/games/#{game}").body)
+        config['name'].must_equal 'updated'
+        config['configuration']['type'].must_equal 'initial'
+      end
+    end
   end
 
   it "can list games of a developer" do
