@@ -1,3 +1,8 @@
+# 0.0.7
+
+* Adds the ``initial`` game type
+* Adds venues
+
 # 0.0.6
 
 * Removes service-client as an explicit dependency as it is now

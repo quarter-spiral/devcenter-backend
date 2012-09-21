@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    devcenter-backend (0.0.6)
+    devcenter-backend (0.0.7)
       datastore-client (= 0.0.4)
       grape (= 0.2.0)
       graph-client (= 0.0.3)
@@ -50,7 +50,7 @@ GEM
       commander
       service-client (= 0.0.4)
     hashie (1.2.0)
-    highline (1.6.14)
+    highline (1.6.15)
     httparty (0.9.0)
       multi_json (~> 1.0)
       multi_xml
