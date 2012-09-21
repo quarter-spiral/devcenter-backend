@@ -23,6 +23,14 @@ module Devcenter::Backend
         game.uuid = uuid
         game
       end
+
+      def sheer_params(*additional_fields_to_delete)
+        sheer_params = params.clone
+        ([:version, :route_info] + additional_fields_to_delete).each do |field|
+          sheer_params.delete field
+        end
+        sheer_params
+      end
     end
 
     before do
@@ -55,7 +63,7 @@ module Devcenter::Backend
 
     namespace '/games' do
       post '/' do
-        Game.create(params).to_hash
+        Game.create(sheer_params).to_hash
       end
 
       post '/:uuid/developers/:developer_uuid' do
@@ -84,14 +92,12 @@ module Devcenter::Backend
         uuid = params[:uuid]
         game = get_game(uuid)
 
-        game.name = params[:name] if params[:name]
-        game.description = params[:description] if params[:description]
-        game.screenshots = params[:screenshots] if params[:screenshots]
-        game.configuration = params[:configuration].to_hash if params[:configuration]
-        game.developer_configuration = params[:developer_configuration].to_hash if params[:developer_configuration]
+        developers = params.delete(:developers)
 
-        if params[:developers]
-          error!("Can't create game with this developer list!", 403) unless game.adjust_developers(params[:developers])
+        game.update_from_hash(sheer_params(:uuid))
+
+        if developers
+          error!("Can't create game with this developer list!", 403) unless game.adjust_developers(developers)
         end
 
         game.save

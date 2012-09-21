@@ -82,6 +82,10 @@ JSON encoded options hash.
 - **developers** [REQUIRED]: Array of UUIDs of the developers of this game
 - **screenshots** [OPTIONAL]: Array of image URLs of screenshots of the game
 - **developer_configuration** [OPTIONAL]: Hash of arbitrary data you want to store along with the game
+- **venues** [OPTIONAL]: Hash of venues (see [venues](#venues)). The
+  key is a venue's name the value may be true or false. A not present
+key is treated as a disabled venue.
+
 
 #### Response
 
@@ -179,6 +183,9 @@ JSON encoded options hash.
 - **developers** [OPTIONAL]: Array of UUIDs of the developers of this game
 - **screenshots** [OPTIONAL]: Array of image URLs of screenshots of the game
 - **developer_configuration** [OPTIONAL]: Hash of arbitrary data you want to store along with the game
+- **venues** [OPTIONAL]: Hash of venues (see [venues](#venues)). The
+  key is a venue's name the value may be true or false. A not present
+key is treated as a disabled venue.
 
 Every option that is not present at all in the request will remain unchanged.
 
@@ -195,7 +202,8 @@ JSON encoded hash of the game's configuration. Example:
   "configuration": {"type": "html5", "url": "http://example.com/game"},
   "developers": ["eb6d96b0-cb55-012f-4393-58b035f5cdfb", "ebc08260-cb55-012f-4394-58b035f5cdfb"],
   "screenshots": ["http://example.com/nonsense/1.jpg", "http://example.com/nonsense/2.jpg"],
-  "developer_configuration": {"background": "red", "musicTheme": "caribbean"}
+  "developer_configuration": {"background": "red", "musicTheme": "caribbean"},
+  "venues": {"facebook": true, "galaxy-spiral": false}
 }
 ```
 Note that no matter which options you passed in through the request, the response will always contain the whole configuration.
@@ -259,3 +267,17 @@ Configuration example:
 
 The ``type`` and ``url`` keys are mandatory. ``url`` is pointing to a
 SWF flash file.
+
+### Venues
+
+Currently available venues.
+
+#### Facebook
+
+**Key**: ``facebook``
+
+#### Galaxy Spiral
+
+**Key**: ``galaxy-spiral``
+
+A white-label venue to embed your game on any website.

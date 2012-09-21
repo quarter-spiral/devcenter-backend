@@ -341,4 +341,61 @@ describe Devcenter::Backend::API do
     config = JSON.parse(response.body)
     config['developers'].must_equal [@entity1]
   end
+
+  describe "game types" do
+    before do
+      @game_data = {name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: 'initial'}}
+      client.post "/v1/developers/#{@entity1}"
+      response = client.post "/v1/games", {}, JSON.dump(@game_data)
+      @game = JSON.parse(response.body)['uuid']
+    end
+
+    it "doesn't allow bullshit venues" do
+      response = client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'facebook' => true, 'bullshit' => true})
+      response.status.wont_equal 200
+      JSON.parse(response.body)['error'].wont_be_empty
+    end
+
+    it "can have multiple venues" do
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'facebook' => true, 'galaxy-spiral' => true})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      (!!config['venues']['facebook']).must_equal true
+      (!!config['venues']['galaxy-spiral']).must_equal true
+    end
+
+    it "can add and remove facebook venue" do
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: true})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      (!!config['venues']['facebook']).must_equal true
+
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: false})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      (!!config['venues']['facebook']).must_equal false
+
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => true})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      (!!config['venues']['facebook']).must_equal false
+    end
+
+    it "can add and remove galaxy-spiral venue" do
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => true})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      (!!config['venues']['galaxy-spiral']).must_equal true
+
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => false})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      (!!config['venues']['galaxy-spiral']).must_equal false
+
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: true})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      (!!config['venues']['galaxy-spiral']).must_equal false
+    end
+  end
 end

@@ -1,7 +1,9 @@
 module Devcenter::Backend
   class Game
+    MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues]
+
     attr_accessor :uuid, :name, :description
-    attr_writer :configuration, :screenshots, :developer_configuration
+    attr_writer :configuration, :screenshots, :developer_configuration, :venues
     attr_reader :original_attributes
 
     def self.create(params)
@@ -22,12 +24,10 @@ module Devcenter::Backend
     end
 
     def initialize(params = {})
-      @name = params['name']
-      @description = params['description']
-      @configuration = params['configuration'].to_hash if params['configuration']
-      @screenshots = params['screenshots']
-      @developer_configuration = params['developer_configuration'].to_hash if params['developer_configuration']
-      @new_game = params[:new_game]
+      params = params.clone
+      @new_game = params.delete(:new_game)
+      params.delete(:developers)
+      raw_update_from_hash(params)
 
       @original_attributes = to_hash
     end
@@ -39,7 +39,7 @@ module Devcenter::Backend
     end
 
     def to_hash(options = {})
-      hash = {uuid: uuid, name: name, description: description, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration}
+      hash = {uuid: uuid, name: name, description: description, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration, venues: venues}
       hash[:developers] = developers unless options[:no_graph]
       hash
     end
@@ -60,6 +60,12 @@ module Devcenter::Backend
       raise e
     end
 
+    def update_from_hash(hash)
+      unassignable_keys = hash.keys.select {|k| !MASS_ASSIGNABLE_ATTRIBUTES.include?(k.to_sym)}
+      raise Error.new("Can not mass update: #{unassignable_keys.join(',')}!") unless unassignable_keys.empty?
+      raw_update_from_hash(hash)
+    end
+
     def add_developer(developer)
       self.class.connection.graph.add_relationship(developer, uuid, 'develops')
     end
@@ -71,6 +77,8 @@ module Devcenter::Backend
     def valid?
       raise ValidationError.new("Games must have a name and a description!") unless name.to_s !~ /^\s*$/ && description.to_s !~ /^\s*$/
       raise ValidationError.new("Game configuration invalid!") unless GameType.valid?(self)
+      Venue.normalize_game!(self)
+      Venue.validate_game(self)
     end
 
     def new_game?
@@ -103,7 +111,18 @@ module Devcenter::Backend
       @screenshots || []
     end
 
+    def venues
+      @venues ||= {}
+    end
+
     protected
+    def raw_update_from_hash(hash)
+      hash.each do |key, value|
+        value = value.to_hash if value.kind_of?(Hash)
+        self.send("#{key}=", value)
+      end
+    end
+
     def self.connection
       @connection ||= Connection.create
     end

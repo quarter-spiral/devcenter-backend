@@ -16,13 +16,9 @@ module Devcenter::Backend
       configuration = game.configuration
       game_type = configuration['type']
       raise ValidationError.new("No game type set!") unless game_type
-      Devcenter::Backend::GameType.const_get(camelize_string(game_type)).new(game)
+      Devcenter::Backend::GameType.const_get(Utils.camelize_string(game_type)).new(game)
     rescue NameError => e
       nil
-    end
-
-    def self.camelize_string(str)
-      str.sub(/^[a-z\d]*/) { $&.capitalize }.gsub(/(?:_|(\/))([a-z\d]*)/i) {$2.capitalize}
     end
   end
 end
