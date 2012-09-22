@@ -4,7 +4,7 @@ PATH
     devcenter-backend (0.0.7)
       datastore-client (= 0.0.4)
       grape (= 0.2.0)
-      graph-client (= 0.0.3)
+      graph-client (= 0.0.4)
       json (= 1.7.4)
 
 GEM
@@ -46,7 +46,7 @@ GEM
       grape (= 0.2.0)
       json (= 1.7.4)
       neography (= 0.0.29)
-    graph-client (0.0.3)
+    graph-client (0.0.4)
       commander
       service-client (= 0.0.4)
     hashie (1.2.0)
