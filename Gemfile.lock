@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     devcenter-backend (0.0.8)
-      datastore-client (= 0.0.4)
+      datastore-client (= 0.0.6)
       grape (= 0.2.0)
       graph-client (= 0.0.4)
       json (= 1.7.4)
@@ -31,8 +31,10 @@ GEM
       mongoid (= 2.4.11)
       rack-jsonp-middleware (= 0.0.5)
       uuid
-    datastore-client (0.0.4)
+    datastore-client (0.0.6)
+      commander
       json
+      service-client (= 0.0.4)
     eventmachine (1.0.0)
     faraday (0.8.1)
       multipart-post (~> 1.1)
