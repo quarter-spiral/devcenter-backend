@@ -1,4 +1,9 @@
+# 0.0.9
+
+* Bumps the ``datastore-client``
+
 # 0.0.8
+
 * Bumps the ``graph-client``
 
 # 0.0.7
