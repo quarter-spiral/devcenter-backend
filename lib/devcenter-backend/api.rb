@@ -7,21 +7,18 @@ module Devcenter::Backend
     format :json
     default_format :json
 
-    rescue_from Devcenter::Backend::Error
-    rescue_from Devcenter::Backend::ValidationError
+    rescue_from Devcenter::Backend::Error::BaseError
+    rescue_from Devcenter::Backend::Error::ValidationError
+
+    rescue_from Devcenter::Backend::Error::NotFoundError do |e|
+      [404, {'Content-Type' => 'application/json'}, [JSON.dump(error: e.message)]]
+    end
+
     error_format :json
 
     helpers do
       def connection
         @connection ||= Connection.create
-      end
-
-      def get_game(uuid)
-        data = connection.datastore.get(:public, uuid)
-        error!("Game #{uuid} not found!", 404) unless data
-        game = Game.new(data['game'])
-        game.uuid = uuid
-        game
       end
 
       def sheer_params(*additional_fields_to_delete)
@@ -36,7 +33,6 @@ module Devcenter::Backend
     before do
       header('Access-Control-Allow-Origin', '*')
     end
-
 
     options '*path' do
       header('Access-Control-Allow-Headers', 'origin, x-requested-with, content-type, accept')
@@ -68,7 +64,7 @@ module Devcenter::Backend
 
       post '/:uuid/developers/:developer_uuid' do
         uuid = params[:uuid]
-        game = get_game(uuid)
+        game = Game.find(uuid)
         game.add_developer(params[:developer_uuid])
 
         game.to_hash
@@ -76,7 +72,7 @@ module Devcenter::Backend
 
       delete '/:uuid/developers/:developer_uuid' do
         uuid = params[:uuid]
-        game = get_game(uuid)
+        game = Game.find(uuid)
         game.remove_developer(params[:developer_uuid])
 
         game.to_hash
@@ -84,13 +80,13 @@ module Devcenter::Backend
 
       get '/:uuid' do
         uuid = params[:uuid]
-        game = get_game(uuid)
+        game = Game.find(uuid)
         game.to_hash
       end
 
       put '/:uuid' do
         uuid = params[:uuid]
-        game = get_game(uuid)
+        game = Game.find(uuid)
 
         developers = params.delete(:developers)
 

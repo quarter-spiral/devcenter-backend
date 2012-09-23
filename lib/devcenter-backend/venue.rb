@@ -14,11 +14,11 @@ module Devcenter::Backend
       venues = game.venues
 
       venues.each do |venue_name, enabled|
-        raise ValidationError.new("Ilformed data for venue '#{venue_name}") if enabled != !!enabled
+        raise Error::ValidationError.new("Ilformed data for venue '#{venue_name}") if enabled != !!enabled
 
         venue = venue_for(venue_name, game)
-        raise ValidationError.new("Venue '#{venue_name}' does not exist!") unless venue
-        raise ValidationError.new("Vanue '#{venue_name}' invalid!") unless venue.valid?
+        raise Error::ValidationError.new("Venue '#{venue_name}' does not exist!") unless venue
+        raise Error::ValidationError.new("Vanue '#{venue_name}' invalid!") unless venue.valid?
       end
     end
 

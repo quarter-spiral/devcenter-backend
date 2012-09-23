@@ -16,10 +16,18 @@ module Devcenter::Backend
       game.save
       unless game.adjust_developers(params[:developers])
         game.destroy
-        raise Error.new("Can't create game with this developer list!")
+        raise Error::BaseError.new("Can't create game with this developer list!")
       end
       connection.graph.add_role(game.uuid, 'game')
       game.mark_as_saved!
+      game
+    end
+
+    def self.find(uuid)
+      data = connection.datastore.get(:public, uuid)
+      raise Error::NotFoundError.new("Game #{uuid} not found!") unless data
+      game = new(data['game'])
+      game.uuid = uuid
       game
     end
 
@@ -75,8 +83,8 @@ module Devcenter::Backend
     end
 
     def valid?
-      raise ValidationError.new("Games must have a name and a description!") unless name.to_s !~ /^\s*$/ && description.to_s !~ /^\s*$/
-      raise ValidationError.new("Game configuration invalid!") unless GameType.valid?(self)
+      raise Error::ValidationError.new("Games must have a name and a description!") unless name.to_s !~ /^\s*$/ && description.to_s !~ /^\s*$/
+      raise Error::ValidationError.new("Game configuration invalid!") unless GameType.valid?(self)
       Venue.normalize_game!(self)
       Venue.validate_game(self)
     end
@@ -128,7 +136,7 @@ module Devcenter::Backend
     end
 
     def self.ensure_enough_developers!(params)
-      raise Error.new("Games must have at least one developer!") if !params[:developers] || params[:developers].empty?
+      raise Error::BaseError.new("Games must have at least one developer!") if !params[:developers] || params[:developers].empty?
     end
 
     def self.ensure_game_is_valid!(game)
