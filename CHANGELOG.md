@@ -1,3 +1,8 @@
+# 0.0.10
+
+* Refactors errors to an explicit module
+* Moves finder method from API to the game model
+
 # 0.0.9
 
 * Bumps the ``datastore-client``
