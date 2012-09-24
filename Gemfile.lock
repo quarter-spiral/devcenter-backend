@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    devcenter-backend (0.0.11)
+    devcenter-backend (0.0.12)
       datastore-client (= 0.0.6)
       grape (= 0.2.0)
       graph-client (= 0.0.4)

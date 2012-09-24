@@ -1,3 +1,7 @@
+# 0.0.12
+
+* Adds thin to the main bundle to run on Heroku
+
 # 0.0.11
 
 * Adds special error when a retireved data set is not a game
