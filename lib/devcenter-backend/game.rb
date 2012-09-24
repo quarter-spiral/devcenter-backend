@@ -26,6 +26,8 @@ module Devcenter::Backend
     def self.find(uuid)
       data = connection.datastore.get(:public, uuid)
       raise Error::NotFoundError.new("Game #{uuid} not found!") unless data
+      raise Error::BaseError.new("Entity not a game") unless data['game']
+
       game = new(data['game'])
       game.uuid = uuid
       game

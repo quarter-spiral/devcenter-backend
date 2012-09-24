@@ -398,4 +398,11 @@ describe Devcenter::Backend::API do
       (!!config['venues']['galaxy-spiral']).must_equal false
     end
   end
+
+  it "does not try to modify non-game resources" do
+    @connection.datastore.set(:public, @entity2, name: 'Not a game')
+    response = client.put "/v1/games/#{@entity2}", {}, JSON.dump(name: 'Update')
+    data = JSON.parse(response.body)
+    data['error'].must_equal "Entity not a game"
+  end
 end
