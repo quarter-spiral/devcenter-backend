@@ -31,7 +31,7 @@ module Devcenter::Backend
       params.delete(:developers)
       raw_update_from_hash(params)
 
-      @original_attributes = to_hash
+      @original_attributes = to_hash(no_graph: true)
     end
 
     def self.find(uuid)
