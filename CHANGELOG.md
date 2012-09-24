@@ -1,3 +1,7 @@
+# 0.0.13
+
+* Makes it possible to initialize games without touching the graph
+
 # 0.0.12
 
 * Adds thin to the main bundle to run on Heroku
