@@ -7,29 +7,21 @@ module Devcenter::Backend
     attr_reader :original_attributes
 
     def self.create(params)
+      developers = params.delete :developers
+
       game = new(params.merge(new_game: true))
 
-      ensure_enough_developers!(params)
+      ensure_enough_developers!(developers)
       ensure_game_is_valid!(game)
 
       game.uuid = connection.datastore.create(:public, {'game' => game.to_hash(no_graph: true)})
       game.save
-      unless game.adjust_developers(params[:developers])
+      unless game.adjust_developers(developers)
         game.destroy
         raise Error::BaseError.new("Can't create game with this developer list!")
       end
       connection.graph.add_role(game.uuid, 'game')
       game.mark_as_saved!
-      game
-    end
-
-    def self.find(uuid)
-      data = connection.datastore.get(:public, uuid)
-      raise Error::NotFoundError.new("Game #{uuid} not found!") unless data
-      raise Error::BaseError.new("Entity not a game") unless data['game']
-
-      game = new(data['game'])
-      game.uuid = uuid
       game
     end
 
@@ -40,6 +32,16 @@ module Devcenter::Backend
       raw_update_from_hash(params)
 
       @original_attributes = to_hash
+    end
+
+    def self.find(uuid)
+      data = connection.datastore.get(:public, uuid)
+      raise Error::NotFoundError.new("Game #{uuid} not found!") unless data
+      raise Error::BaseError.new("Entity not a game") unless data['game']
+
+      game = new(data['game'])
+      game.uuid = uuid
+      game
     end
 
     def destroy
@@ -137,8 +139,8 @@ module Devcenter::Backend
       @connection ||= Connection.create
     end
 
-    def self.ensure_enough_developers!(params)
-      raise Error::BaseError.new("Games must have at least one developer!") if !params[:developers] || params[:developers].empty?
+    def self.ensure_enough_developers!(developers)
+      raise Error::BaseError.new("Games must have at least one developer!") if !developers || developers.empty?
     end
 
     def self.ensure_game_is_valid!(game)
