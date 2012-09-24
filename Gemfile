@@ -7,6 +7,10 @@ gemspec
 #gem 'service-client', path: '../service-client'
 #gem 'datastore-client', path: '../datastore-client'
 #gem 'graph-client', path: '../graph-client'
+#
+platforms :ruby do
+  gem 'thin'
+end
 
 group :development, :test do
   #gem 'graph-backend', path: '../graph-backend'
@@ -19,10 +23,6 @@ group :development, :test do
   gem 'rack-test'
   gem 'rake'
   gem 'uuid'
-
-  platforms :ruby do
-    gem 'thin'
-  end
 
   platforms :rbx do
     gem 'bson_ext'
