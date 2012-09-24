@@ -1,3 +1,8 @@
+# 0.0.11
+
+* Adds special error when a retireved data set is not a game
+* Hardens game creation (passing developers has been picky)
+
 # 0.0.10
 
 * Refactors errors to an explicit module
