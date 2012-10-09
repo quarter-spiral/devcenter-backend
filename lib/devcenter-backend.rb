@@ -5,6 +5,7 @@ end
 
 require "datastore-client"
 require "graph-client"
+require "auth-client"
 
 require "devcenter-backend/version"
 require "devcenter-backend/error"

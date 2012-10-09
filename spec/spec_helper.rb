@@ -1,10 +1,15 @@
-Bundler.setup
+ENV['RACK_ENV'] ||= 'test'
+
+Bundler.require
+
+require 'rack/client'
 
 require 'minitest/autorun'
 
 require 'devcenter-backend'
 
 require 'datastore-backend'
+require 'auth-backend'
 require 'graph-backend'
 
 module Devcenter::Backend

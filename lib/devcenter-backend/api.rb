@@ -32,6 +32,10 @@ module Devcenter::Backend
 
     before do
       header('Access-Control-Allow-Origin', '*')
+
+      error!('Unauthenticated', 403) unless request.env['HTTP_AUTHORIZATION']
+      @token = request.env['HTTP_AUTHORIZATION'].gsub(/^Bearer\s+/, '')
+      error!('Unauthenticated', 403) unless connection.auth.token_valid?(@token)
     end
 
     options '*path' do
@@ -43,28 +47,28 @@ module Devcenter::Backend
 
     namespace '/developers' do
       post '/:uuid' do
-        connection.graph.add_role(params[:uuid], 'developer')
+        connection.graph.add_role(params[:uuid], @token, 'developer')
         ''
       end
 
       delete '/:uuid' do
-        connection.graph.remove_role(params[:uuid], 'developer')
+        connection.graph.remove_role(params[:uuid], @token, 'developer')
         ''
       end
 
       get '/:uuid/games' do
-        connection.graph.list_related_entities(params[:uuid], 'develops')
+        connection.graph.list_related_entities(params[:uuid], @token, 'develops')
       end
     end
 
     namespace '/games' do
       post '/' do
-        Game.create(sheer_params).to_hash
+        Game.create(@token, sheer_params).to_hash
       end
 
       post '/:uuid/developers/:developer_uuid' do
         uuid = params[:uuid]
-        game = Game.find(uuid)
+        game = Game.find(uuid, @token)
         game.add_developer(params[:developer_uuid])
 
         game.to_hash
@@ -72,7 +76,7 @@ module Devcenter::Backend
 
       delete '/:uuid/developers/:developer_uuid' do
         uuid = params[:uuid]
-        game = Game.find(uuid)
+        game = Game.find(uuid, @token)
         game.remove_developer(params[:developer_uuid])
 
         game.to_hash
@@ -80,13 +84,13 @@ module Devcenter::Backend
 
       get '/:uuid' do
         uuid = params[:uuid]
-        game = Game.find(uuid)
+        game = Game.find(uuid, @token)
         game.to_hash
       end
 
       put '/:uuid' do
         uuid = params[:uuid]
-        game = Game.find(uuid)
+        game = Game.find(uuid, @token)
 
         developers = params.delete(:developers)
 
@@ -101,7 +105,7 @@ module Devcenter::Backend
       end
 
       delete '/:uuid' do
-        game = Game.new
+        game = Game.new(@token)
         game.uuid = params[:uuid]
         game.destroy
       end

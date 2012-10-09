@@ -4,28 +4,29 @@ module Devcenter::Backend
 
     attr_accessor :uuid, :name, :description
     attr_writer :configuration, :screenshots, :developer_configuration, :venues
-    attr_reader :original_attributes
+    attr_reader :original_attributes, :token
 
-    def self.create(params)
+    def self.create(token, params)
       developers = params.delete :developers
 
-      game = new(params.merge(new_game: true))
+      game = new(token, params.merge(new_game: true))
 
       ensure_enough_developers!(developers)
       ensure_game_is_valid!(game)
 
-      game.uuid = connection.datastore.create(:public, {'game' => game.to_hash(no_graph: true)})
+      game.uuid = connection.datastore.create(:public, token, {'game' => game.to_hash(no_graph: true)})
       game.save
       unless game.adjust_developers(developers)
         game.destroy
         raise Error::BaseError.new("Can't create game with this developer list!")
       end
-      connection.graph.add_role(game.uuid, 'game')
+      connection.graph.add_role(game.uuid, token, 'game')
       game.mark_as_saved!
       game
     end
 
-    def initialize(params = {})
+    def initialize(token, params = {})
+      @token = token
       params = params.clone
       @new_game = params.delete(:new_game)
       params.delete(:developers)
@@ -34,20 +35,20 @@ module Devcenter::Backend
       @original_attributes = to_hash(no_graph: true)
     end
 
-    def self.find(uuid)
-      data = connection.datastore.get(:public, uuid)
+    def self.find(uuid, token)
+      data = connection.datastore.get(:public, uuid, token)
       raise Error::NotFoundError.new("Game #{uuid} not found!") unless data
       raise Error::BaseError.new("Entity not a game") unless data['game']
 
-      game = new(data['game'])
+      game = new(token, data['game'])
       game.uuid = uuid
       game
     end
 
     def destroy
       connection = self.class.connection
-      connection.datastore.set(:public, uuid, {})
-      connection.graph.delete_entity(uuid)
+      connection.datastore.set(:public, uuid, token, {})
+      connection.graph.delete_entity(uuid, token)
     end
 
     def to_hash(options = {})
@@ -79,11 +80,11 @@ module Devcenter::Backend
     end
 
     def add_developer(developer)
-      self.class.connection.graph.add_relationship(developer, uuid, 'develops')
+      self.class.connection.graph.add_relationship(developer, uuid, token, 'develops')
     end
 
     def remove_developer(developer)
-      self.class.connection.graph.remove_relationship(developer, uuid, 'develops')
+      self.class.connection.graph.remove_relationship(developer, uuid, token, 'develops')
     end
 
     def valid?
@@ -103,12 +104,12 @@ module Devcenter::Backend
 
     def save
       self.class.ensure_game_is_valid!(self)
-      self.class.connection.datastore.set(:public, uuid, {'game' => to_hash(no_graph: true)})
+      self.class.connection.datastore.set(:public, uuid, token, {'game' => to_hash(no_graph: true)})
     end
 
     def developers
       return [] unless uuid
-      self.class.connection.graph.list_related_entities(uuid, 'develops', direction: 'incoming')
+      self.class.connection.graph.list_related_entities(uuid, token, 'develops', direction: 'incoming')
     end
 
     def configuration
