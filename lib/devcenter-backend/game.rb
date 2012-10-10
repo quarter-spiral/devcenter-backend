@@ -3,7 +3,7 @@ module Devcenter::Backend
     MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues]
 
     attr_accessor :uuid, :name, :description
-    attr_writer :configuration, :screenshots, :developer_configuration, :venues
+    attr_writer :configuration, :screenshots, :developer_configuration
     attr_reader :original_attributes, :token
 
     def self.create(token, params)
@@ -90,7 +90,7 @@ module Devcenter::Backend
     def valid?
       raise Error::ValidationError.new("Games must have a name and a description!") unless name.to_s !~ /^\s*$/ && description.to_s !~ /^\s*$/
       raise Error::ValidationError.new("Game configuration invalid!") unless GameType.valid?(self)
-      Venue.normalize_game!(self)
+
       Venue.validate_game(self)
     end
 
@@ -126,6 +126,12 @@ module Devcenter::Backend
 
     def venues
       @venues ||= {}
+    end
+
+    def venues=(new_venues)
+      new_venues.each do |venue, config|
+        venues[venue] = config
+      end
     end
 
     protected

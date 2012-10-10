@@ -415,51 +415,51 @@ describe Devcenter::Backend::API do
       end
 
       it "doesn't allow bullshit venues" do
-        response = client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'facebook' => true, 'bullshit' => true})
+        response = client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'facebook' => {enabled: true}, 'bullshit' => {enabled: true}})
         response.status.wont_equal 200
         JSON.parse(response.body)['error'].wont_be_empty
       end
 
       it "can have multiple venues" do
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'facebook' => true, 'galaxy-spiral' => true})
+        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'facebook' => {enabled: true}, 'galaxy-spiral' => {enabled: true}})
         response = client.get "/v1/games/#{@game}"
         config = JSON.parse(response.body)
-        (!!config['venues']['facebook']).must_equal true
-        (!!config['venues']['galaxy-spiral']).must_equal true
+        config['venues']['facebook'].must_equal('enabled' => true)
+        config['venues']['galaxy-spiral'].must_equal('enabled' => true)
       end
 
       it "can add and remove facebook venue" do
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: true})
+        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: {enabled: true}})
         response = client.get "/v1/games/#{@game}"
         config = JSON.parse(response.body)
-        (!!config['venues']['facebook']).must_equal true
+        config['venues']['facebook'].must_equal('enabled' => true)
 
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: false})
+        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: {enabled: false}})
         response = client.get "/v1/games/#{@game}"
         config = JSON.parse(response.body)
-        (!!config['venues']['facebook']).must_equal false
+        config['venues']['facebook'].must_equal('enabled' => false)
 
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => true})
+        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => {enabled: false}})
         response = client.get "/v1/games/#{@game}"
         config = JSON.parse(response.body)
-        (!!config['venues']['facebook']).must_equal false
+        config['venues']['facebook'].must_equal('enabled' => false)
       end
 
       it "can add and remove galaxy-spiral venue" do
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => true})
+        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => {enabled: true}})
         response = client.get "/v1/games/#{@game}"
         config = JSON.parse(response.body)
-        (!!config['venues']['galaxy-spiral']).must_equal true
+        config['venues']['galaxy-spiral'].must_equal('enabled' => true)
 
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => false})
+        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => {enabled: false}})
         response = client.get "/v1/games/#{@game}"
         config = JSON.parse(response.body)
-        (!!config['venues']['galaxy-spiral']).must_equal false
+        config['venues']['galaxy-spiral'].must_equal('enabled' => false)
 
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: true})
+        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: {enabled: true}})
         response = client.get "/v1/games/#{@game}"
         config = JSON.parse(response.body)
-        (!!config['venues']['galaxy-spiral']).must_equal false
+        config['venues']['galaxy-spiral'].must_equal('enabled' => false)
       end
     end
 

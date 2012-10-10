@@ -83,7 +83,8 @@ JSON encoded options hash.
 - **screenshots** [OPTIONAL]: Array of image URLs of screenshots of the game
 - **developer_configuration** [OPTIONAL]: Hash of arbitrary data you want to store along with the game
 - **venues** [OPTIONAL]: Hash of venues (see [venues](#venues)). The
-  key is a venue's name the value may be true or false. A not present
+  key is a venue's name the value is a hash which at least contains
+the key ``enabled`` which can be true or false. A not present
 key is treated as a disabled venue.
 
 
@@ -184,8 +185,7 @@ JSON encoded options hash.
 - **screenshots** [OPTIONAL]: Array of image URLs of screenshots of the game
 - **developer_configuration** [OPTIONAL]: Hash of arbitrary data you want to store along with the game
 - **venues** [OPTIONAL]: Hash of venues (see [venues](#venues)). The
-  key is a venue's name the value may be true or false. A not present
-key is treated as a disabled venue.
+  key is a venue's name the value  is a hash which at least contains the key ``enabled`` which can be true or false. A not present key is treated as a disabled venue.
 
 Every option that is not present at all in the request will remain unchanged.
 
@@ -203,7 +203,7 @@ JSON encoded hash of the game's configuration. Example:
   "developers": ["eb6d96b0-cb55-012f-4393-58b035f5cdfb", "ebc08260-cb55-012f-4394-58b035f5cdfb"],
   "screenshots": ["http://example.com/nonsense/1.jpg", "http://example.com/nonsense/2.jpg"],
   "developer_configuration": {"background": "red", "musicTheme": "caribbean"},
-  "venues": {"facebook": true, "galaxy-spiral": false}
+  "venues": {"facebook": {"enabled": true}, "galaxy-spiral": {"enabled": false}}
 }
 ```
 Note that no matter which options you passed in through the request, the response will always contain the whole configuration.
@@ -275,6 +275,10 @@ Currently available venues.
 #### Facebook
 
 **Key**: ``facebook``
+
+##### Options
+
+
 
 #### Galaxy Spiral
 

@@ -3,7 +3,8 @@ module Devcenter::Backend
     class Base
       attr_reader :game
 
-      def initialize(game)
+      def initialize(config, game)
+        @config = config
         @game = game
       end
 
