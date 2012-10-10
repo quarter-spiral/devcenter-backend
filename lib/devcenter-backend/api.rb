@@ -33,13 +33,15 @@ module Devcenter::Backend
     before do
       header('Access-Control-Allow-Origin', '*')
 
-      error!('Unauthenticated', 403) unless request.env['HTTP_AUTHORIZATION']
-      @token = request.env['HTTP_AUTHORIZATION'].gsub(/^Bearer\s+/, '')
-      error!('Unauthenticated', 403) unless connection.auth.token_valid?(@token)
+      unless request.env['REQUEST_METHOD'] == 'OPTIONS'
+        error!('Unauthenticated', 403) unless request.env['HTTP_AUTHORIZATION']
+        @token = request.env['HTTP_AUTHORIZATION'].gsub(/^Bearer\s+/, '')
+        error!('Unauthenticated', 403) unless connection.auth.token_valid?(@token)
+      end
     end
 
     options '*path' do
-      header('Access-Control-Allow-Headers', 'origin, x-requested-with, content-type, accept')
+      header('Access-Control-Allow-Headers', 'origin, x-requested-with, content-type, accept, authorization')
       header('Access-Control-Allow-Methods', 'GET, PUT,OPTIONS, POST, DELETE')
       header('Access-Control-Max-Age', '1728000')
       ""
