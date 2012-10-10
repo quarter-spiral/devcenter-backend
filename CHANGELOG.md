@@ -1,3 +1,7 @@
+# 0.0.14
+
+* OPTIONS requests don't need to be authenticated anymore
+
 # 0.0.13
 
 * Makes it possible to initialize games without touching the graph
