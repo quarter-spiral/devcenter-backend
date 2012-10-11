@@ -1,72 +1,8 @@
 require_relative '../spec_helper.rb'
+require_relative '../request_spec_helper.rb'
 
 require 'json'
 require 'uuid'
-require 'rack/client'
-
-include Devcenter::Backend
-
-class AuthenticationInjector
-  def self.token=(token)
-    @token = token
-  end
-
-  def self.token
-    @token
-  end
-
-  def self.reset!
-    @token = nil
-  end
-
-  def initialize(app)
-    @app = app
-  end
-
-  def call(env)
-    if token = self.class.token
-      env['HTTP_AUTHORIZATION'] = "Bearer #{token}"
-    end
-
-    @app.call(env)
-  end
-end
-
-ENV['QS_AUTH_BACKEND_URL'] = 'http://auth-backend.dev'
-
-API_APP  = API.new
-AUTH_APP = Auth::Backend::App.new(test: true)
-
-module Auth
-  class Client
-    alias raw_initialize initialize
-    def initialize(url, options = {})
-      raw_initialize(url, options.merge(adapter: [:rack, AUTH_APP]))
-    end
-  end
-end
-
-def client
-  return @client if @client
-
-  @client =  Rack::Client.new {
-    use AuthenticationInjector
-    run API_APP
-  }
-
-  def @client.get(url, headers = {}, body = '', &block)
-    request('GET', url, headers, body, {}, &block)
-  end
-  def @client.delete(url, headers = {}, body = '', &block)
-    request('DELETE', url, headers, body, {}, &block)
-  end
-
-  @client
-end
-
-require 'auth-backend/test_helpers'
-auth_helpers = Auth::Backend::TestHelpers.new(AUTH_APP)
-token = auth_helpers.get_token
 
 describe Devcenter::Backend::API do
   before do
@@ -302,7 +238,6 @@ describe Devcenter::Backend::API do
       client.post "/v1/developers/#{@entity2}"
       client.post "/v1/developers/#{@entity3}"
 
-
       response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"})
       game = JSON.parse(response.body)['uuid']
 
@@ -404,63 +339,6 @@ describe Devcenter::Backend::API do
       response = client.get "/v1/games/#{game}"
       config = JSON.parse(response.body)
       config['developers'].must_equal [@entity1]
-    end
-
-    describe "game types" do
-      before do
-        @game_data = {name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: 'initial'}}
-        client.post "/v1/developers/#{@entity1}"
-        response = client.post "/v1/games", {}, JSON.dump(@game_data)
-        @game = JSON.parse(response.body)['uuid']
-      end
-
-      it "doesn't allow bullshit venues" do
-        response = client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'facebook' => {enabled: true}, 'bullshit' => {enabled: true}})
-        response.status.wont_equal 200
-        JSON.parse(response.body)['error'].wont_be_empty
-      end
-
-      it "can have multiple venues" do
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'facebook' => {enabled: true}, 'galaxy-spiral' => {enabled: true}})
-        response = client.get "/v1/games/#{@game}"
-        config = JSON.parse(response.body)
-        config['venues']['facebook'].must_equal('enabled' => true)
-        config['venues']['galaxy-spiral'].must_equal('enabled' => true)
-      end
-
-      it "can add and remove facebook venue" do
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: {enabled: true}})
-        response = client.get "/v1/games/#{@game}"
-        config = JSON.parse(response.body)
-        config['venues']['facebook'].must_equal('enabled' => true)
-
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: {enabled: false}})
-        response = client.get "/v1/games/#{@game}"
-        config = JSON.parse(response.body)
-        config['venues']['facebook'].must_equal('enabled' => false)
-
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => {enabled: false}})
-        response = client.get "/v1/games/#{@game}"
-        config = JSON.parse(response.body)
-        config['venues']['facebook'].must_equal('enabled' => false)
-      end
-
-      it "can add and remove galaxy-spiral venue" do
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => {enabled: true}})
-        response = client.get "/v1/games/#{@game}"
-        config = JSON.parse(response.body)
-        config['venues']['galaxy-spiral'].must_equal('enabled' => true)
-
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'galaxy-spiral' => {enabled: false}})
-        response = client.get "/v1/games/#{@game}"
-        config = JSON.parse(response.body)
-        config['venues']['galaxy-spiral'].must_equal('enabled' => false)
-
-        client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: {enabled: true}})
-        response = client.get "/v1/games/#{@game}"
-        config = JSON.parse(response.body)
-        config['venues']['galaxy-spiral'].must_equal('enabled' => false)
-      end
     end
 
     it "does not try to modify non-game resources" do

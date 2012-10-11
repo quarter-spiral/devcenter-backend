@@ -17,7 +17,6 @@ module Devcenter::Backend
       end
     end
 
-    protected
     def self.venue_for(venue, config, game)
       Devcenter::Backend::Venue.const_get(Utils.camelize_string(venue)).new(config, game)
     rescue NameError => e

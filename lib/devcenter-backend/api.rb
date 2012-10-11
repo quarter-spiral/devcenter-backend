@@ -1,4 +1,5 @@
 require 'grape'
+require 'logger'
 
 module Devcenter::Backend
   class API < ::Grape::API
@@ -7,8 +8,22 @@ module Devcenter::Backend
     format :json
     default_format :json
 
-    rescue_from Devcenter::Backend::Error::BaseError
-    rescue_from Devcenter::Backend::Error::ValidationError
+    def self.logger
+      Devcenter::Backend.logger
+    end
+
+    def self.warn(msg)
+      logger.warn(msg)
+    end
+
+    rescue_from Devcenter::Backend::Error::BaseError do |e|
+      API.logger.warn "Error! #{e.class.name} - #{e.message}"
+      [500, {'Content-Type' => 'application/json'}, [JSON.dump(error: e.message)]]
+    end
+    rescue_from Devcenter::Backend::Error::ValidationError do |e|
+      API.logger.warn "Error! #{e.class.name} - #{e.message}"
+      [422, {'Content-Type' => 'application/json'}, [JSON.dump(error: e.message)]]
+    end
 
     rescue_from Devcenter::Backend::Error::NotFoundError do |e|
       [404, {'Content-Type' => 'application/json'}, [JSON.dump(error: e.message)]]

@@ -52,8 +52,10 @@ module Devcenter::Backend
     end
 
     def to_hash(options = {})
-      hash = {uuid: uuid, name: name, description: description, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration, venues: venues}
+      hash = {uuid: uuid, name: name, description: description, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration}
+
       hash[:developers] = developers unless options[:no_graph]
+      hash[:venues] = options[:no_graph] ? venues : venues_with_computed_config
       hash
     end
 
@@ -126,6 +128,13 @@ module Devcenter::Backend
 
     def venues
       @venues ||= {}
+    end
+
+    def venues_with_computed_config
+      Hash[@venues.map do |name, config|
+        venue = Venue.venue_for(name, config, self)
+        [name, venue.computed_config]
+      end]
     end
 
     def venues=(new_venues)
