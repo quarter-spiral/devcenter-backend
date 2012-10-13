@@ -1,3 +1,7 @@
+# 0.0.15
+
+* Relaxes dependency on auth-client
+
 # 0.0.14
 
 * OPTIONS requests don't need to be authenticated anymore

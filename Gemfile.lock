@@ -19,8 +19,8 @@ GIT
 PATH
   remote: .
   specs:
-    devcenter-backend (0.0.14)
-      auth-client (= 0.0.6)
+    devcenter-backend (0.0.15)
+      auth-client (>= 0.0.6)
       datastore-client (= 0.0.7)
       grape (= 0.2.0)
       graph-client (= 0.0.5)
