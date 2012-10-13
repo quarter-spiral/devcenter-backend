@@ -19,5 +19,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'json', '1.7.4'
   gem.add_dependency 'datastore-client', '0.0.7'
   gem.add_dependency 'graph-client', '0.0.5'
-  gem.add_dependency 'auth-client', '0.0.6'
+  gem.add_dependency 'auth-client', '>=0.0.6'
 end
