@@ -1,3 +1,7 @@
+# 0.0.16 WIP
+
+* Eases the internal dependencies
+
 # 0.0.15
 
 * Relaxes dependency on auth-client

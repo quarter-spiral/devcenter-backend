@@ -21,9 +21,9 @@ PATH
   specs:
     devcenter-backend (0.0.15)
       auth-client (>= 0.0.6)
-      datastore-client (= 0.0.7)
+      datastore-client (>= 0.0.7)
       grape (= 0.2.0)
-      graph-client (= 0.0.5)
+      graph-client (>= 0.0.5)
       json (= 1.7.4)
 
 GEM
