@@ -6,73 +6,110 @@ A backend to handle everything game/developer related.
 
 The service must be accessed by HTTPS.
 
-### Promoting an entity to become a developer
+### Player Facing
 
-#### Request
+#### List all games
+
+##### Request
+
+**GET** ``/public/games``
+
+###### Body
+
+Empty.
+
+##### Response
+
+###### Body
+
+JSON encoded array of games like this:
+
+```javascript
+{
+  "games": [
+    {
+      "uuid": "68749650",
+      "name": "Some Game",
+      "description: "A beautiful game"
+    },
+    {
+      "uuid": "8645645",
+      "name": "Amaze Balls",
+      "description: "The best game ever"
+    }
+  ]
+}
+```
+
+### Developer Facing
+
+#### Promoting an entity to become a developer
+
+##### Request
 
 **POST** ``/developers/:UUID:``
 
-##### Parameters
+###### Parameters
 
 - **UUID** [REQUIRED]: The UUID of the entity that should become a developer
 
-##### Body
+###### Body
 
 Empty.
 
-#### Response
+##### Response
 
-##### Body
+###### Body
 
 Empty.
 
-### Demoting an entity from being a developer
+#### Demoting an entity from being a developer
 
 Doing so will also remove the entity as a developer from from all games he currently develops.
 
-#### Request
+##### Request
 
 **DELETE** ``/developers/:UUID:``
 
-##### Parameters
+###### Parameters
 
 - **UUID** [REQUIRED]: The UUID of the entity that should be demoted from being a developer
 
-##### Body
+###### Body
 
 Empty.
 
-#### Response
+##### Response
 
-##### Body
+###### Body
 
 Empty.
 
-### List games of a developer
+#### List games of a developer
 
 **GET** ``/developers/:UUID:/games``
 
-##### Parameters
+###### Parameters
 
 - **UUID** [REQUIRED]: The UUID of the developer you want to list the games from
 
-##### Body
+###### Body
 
 Empty.
 
-#### Response
+##### Response
 
-##### Body
+###### Body
 
 JSON encoded array of UUIDs of his games.
 
-### Adding a game
+#### Adding a game
 
-#### Request
+##### Request
 
 **POST** ``/games``
 
-##### Body
+###### Body
 
 JSON encoded options hash.
 
@@ -88,92 +125,91 @@ the key ``enabled`` which can be true or false. A not present
 key is treated as a disabled venue.
 
 
-#### Response
+##### Response
 
-##### Body
+###### Body
 
 JSON encoded hash containing the UUID of the newly created game. Example: ``{"uuid": "eb798e00-cb53-012f-4392-58b035f5cdfb"}``
 
-### Adding a developer to a game
+#### Adding a developer to a game
 
-#### Request
+##### Request
 
 **POST** ``/games/:GAME-UUID:/developers/:DEVELOPER-UUID:``
 
-##### Parameters
+###### Parameters
 
 - **GAME-UUID** [REQUIRED]: The UUID of the game you want to add the developer to
 - **DEVELOPER-UUID** [REQUIRED]: The UUID of the developer you want to add to
   the game
 
-##### Body
+###### Body
 
 Empty.
 
-#### Response
+##### Response
 
-##### Body
+###### Body
 
 JSON encoded hash of the game's configuration. See ``Changing a game``
 for an example.
 
-### Removing a developer from a game
+#### Removing a developer from a game
 
-#### Request
+##### Request
 
 **DELETE** ``/games/:GAME-UUID:/developers/:DEVELOPER-UUID:``
 
-##### Parameters
+###### Parameters
 
 - **GAME-UUID** [REQUIRED]: The UUID of the game you want to add the developer to
 - **DEVELOPER-UUID** [REQUIRED]: The UUID of the developer you want to add to
   the game
 
-##### Body
+###### Body
 
 Empty.
 
-#### Response
+##### Response
 
-##### Body
+###### Body
 
 JSON encoded hash of the game's configuration. See ``Changing a game``
 for an example.
 
-
-### Deleting a game
+#### Deleting a game
 
 Deleting a game will also remove all developers from this game (relations from developers to the game will be removed, not the developers themselves).
 
-#### Request
+##### Request
 
 **DELETE** ``/games/:UUID:``
 
-##### Parameters
+###### Parameters
 
 - **UUID** [REQUIRED]: The UUID of the game to be deleted
 
-##### Body
+###### Body
 
 Empty.
 
-#### Response
+##### Response
 
-##### Body
+###### Body
 
 Empty.
 
-### Change a game's configuration
+#### Change a game's configuration
 
-#### Request
+##### Request
 
 **PUT** ``/games/:UUID:``
 
-##### Parameters
+###### Parameters
 
 - **UUID** [REQUIRED]: The UUID of the game you want to change
 
-##### Body
+###### Body
 
 JSON encoded options hash.
 
@@ -189,9 +225,9 @@ JSON encoded options hash.
 
 Every option that is not present at all in the request will remain unchanged.
 
-#### Response
+##### Response
 
-##### Body
+###### Body
 
 JSON encoded hash of the game's configuration. Example:
 
@@ -208,23 +244,23 @@ JSON encoded hash of the game's configuration. Example:
 ```
 Note that no matter which options you passed in through the request, the response will always contain the whole configuration.
 
-### Retrieve a game's configuration
+#### Retrieve a game's configuration
 
-#### Request
+##### Request
 
 **GET** ``/games/:UUID:``
 
-##### Parameters
+###### Parameters
 
 - **UUID** [REQUIRED]: The UUID of the game you want to retrieve the configuration for
 
-##### Body
+###### Body
 
 Empty.
 
-#### Response
+##### Response
 
-##### Body
+###### Body
 
 JSON encoded hash of the game's configuration. See ``Change a game's configuration`` response section for an example payload.
 

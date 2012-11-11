@@ -8,6 +8,16 @@ module Devcenter::Backend
     format :json
     default_format :json
 
+    class TokenStore
+      def self.token(connection)
+        @token ||= connection.auth.create_app_token(ENV['QS_OAUTH_CLIENT_ID'], ENV['QS_OAUTH_CLIENT_SECRET'])
+      end
+
+      def self.reset!
+        @token = nil
+      end
+    end
+
     def self.logger
       Devcenter::Backend.logger
     end
@@ -43,12 +53,24 @@ module Devcenter::Backend
         end
         sheer_params
       end
+
+      def token
+        TokenStore.token(connection)
+      end
+
+      def try_twice_and_avoid_token_expiration
+        yield
+      rescue Service::Client::ServiceError => e
+        raise e unless e.error == 'Unauthenticated'
+        TokenStore.reset!
+        yield
+      end
     end
 
     before do
       header('Access-Control-Allow-Origin', '*')
 
-      unless request.env['REQUEST_METHOD'] == 'OPTIONS'
+      unless request.request_method == 'OPTIONS' || request.path_info =~ /^\/public\//
         error!('Unauthenticated', 403) unless request.env['HTTP_AUTHORIZATION']
         @token = request.env['HTTP_AUTHORIZATION'].gsub(/^Bearer\s+/, '')
         error!('Unauthenticated', 403) unless connection.auth.token_valid?(@token)
@@ -60,6 +82,16 @@ module Devcenter::Backend
       header('Access-Control-Allow-Methods', 'GET, PUT,OPTIONS, POST, DELETE')
       header('Access-Control-Max-Age', '1728000')
       ""
+    end
+
+    namespace '/public' do
+      get '/games' do
+        games = try_twice_and_avoid_token_expiration do
+          Game.all(token)
+        end
+
+        {'games' => games.map {|game| game.public_information}}
+      end
     end
 
     namespace '/developers' do

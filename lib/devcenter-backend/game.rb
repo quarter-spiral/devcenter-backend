@@ -45,6 +45,11 @@ module Devcenter::Backend
       game
     end
 
+    def self.all(token)
+      game_uuids = connection.graph.uuids_by_role(token, 'game')
+      game_uuids.map {|game_uuid| find(game_uuid, token)}
+    end
+
     def destroy
       connection = self.class.connection
       connection.datastore.set(:public, uuid, token, {})
@@ -57,6 +62,10 @@ module Devcenter::Backend
       hash[:developers] = developers unless options[:no_graph]
       hash[:venues] = options[:no_graph] ? venues : venues_with_computed_config
       hash
+    end
+
+    def public_information
+      {'uuid' => uuid, 'name' => name, 'description' => description}
     end
 
     def adjust_developers(new_developers)

@@ -61,7 +61,15 @@ def client
   @client
 end
 
-QS_SPEC_TOKEN ||= Auth::Backend::TestHelpers.new(AUTH_APP).get_token
+AUTH_HELPERS = Auth::Backend::TestHelpers.new(AUTH_APP)
+
+QS_SPEC_TOKEN ||= AUTH_HELPERS.get_token
 def token
   QS_SPEC_TOKEN
 end
+
+oauth_app = AUTH_HELPERS.create_app!
+ENV['QS_OAUTH_CLIENT_ID'] = oauth_app[:id]
+ENV['QS_OAUTH_CLIENT_SECRET'] = oauth_app[:secret]
+
+APP_TOKEN = Devcenter::Backend::Connection.create.auth.create_app_token(oauth_app[:id], oauth_app[:secret])

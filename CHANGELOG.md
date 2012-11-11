@@ -1,3 +1,7 @@
+# 0.0.17 WIP
+
+* Adds an endpoint to retrieve public information about all games
+
 # 0.0.16
 
 * Eases the internal dependencies
