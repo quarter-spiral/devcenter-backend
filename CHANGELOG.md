@@ -1,4 +1,4 @@
-# 0.0.17 WIP
+# 0.0.17
 
 * Adds an endpoint to retrieve public information about all games
 
