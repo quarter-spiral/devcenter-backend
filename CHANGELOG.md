@@ -1,3 +1,7 @@
+# 0.0.18 WIP
+
+* Gives more intel on error messages for invalid games
+
 # 0.0.17
 
 * Adds an endpoint to retrieve public information about all games
