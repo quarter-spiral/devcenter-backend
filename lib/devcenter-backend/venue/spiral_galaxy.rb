@@ -1,8 +1,8 @@
 module Devcenter::Backend
   module Venue
-    class GalaxySpiral < Base
+    class SpiralGalaxy < Base
       def venue_id
-        'galaxy-spiral'
+        'spiral-galaxy'
       end
     end
   end

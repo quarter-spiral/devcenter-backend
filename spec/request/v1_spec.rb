@@ -345,7 +345,7 @@ describe Devcenter::Backend::API do
       @connection.datastore.set(:public, @entity2, token, name: 'Not a game')
       response = client.put "/v1/games/#{@entity2}", {}, JSON.dump(name: 'Update')
       data = JSON.parse(response.body)
-      data['error'].must_equal "Entity not a game"
+      data['error'].must_equal "Entity not a game (#{@entity2})"
     end
   end
 end
