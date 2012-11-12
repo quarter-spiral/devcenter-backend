@@ -1,4 +1,4 @@
-# 0.0.18 WIP
+# 0.0.18
 
 * Renames galaxy-spiral to spiral-galaxy
 * Gives more intel on error messages for invalid games
