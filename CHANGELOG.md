@@ -1,5 +1,6 @@
 # 0.0.19 WIP
 
+* Adds screenshots to the publicly available game information
 * Refactors galaxy-spiral to spiral-galaxy in the README
 
 # 0.0.18

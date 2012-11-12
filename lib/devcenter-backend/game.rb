@@ -65,7 +65,7 @@ module Devcenter::Backend
     end
 
     def public_information
-      {'uuid' => uuid, 'name' => name, 'description' => description}
+      {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots}
     end
 
     def adjust_developers(new_developers)
