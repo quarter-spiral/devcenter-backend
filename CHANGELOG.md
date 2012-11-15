@@ -1,4 +1,4 @@
-# 0.0.20 WIP
+# 0.0.20
 
 * Bumps datastore dependencies to adopt to the new datastore API
 
