@@ -14,7 +14,7 @@ module Devcenter::Backend
       ensure_enough_developers!(developers)
       ensure_game_is_valid!(game)
 
-      game.uuid = connection.datastore.create(:public, token, {'game' => game.to_hash(no_graph: true)})
+      game.uuid = connection.datastore.create(token, {'game' => game.to_hash(no_graph: true)})
       game.save
       unless game.adjust_developers(developers)
         game.destroy
@@ -36,7 +36,7 @@ module Devcenter::Backend
     end
 
     def self.find(uuid, token)
-      data = connection.datastore.get(:public, uuid, token)
+      data = connection.datastore.get(uuid, token)
       raise Error::NotFoundError.new("Game #{uuid} not found!") unless data
       raise Error::BaseError.new("Entity not a game (#{uuid})") unless data['game']
 
@@ -52,7 +52,7 @@ module Devcenter::Backend
 
     def destroy
       connection = self.class.connection
-      connection.datastore.set(:public, uuid, token, {})
+      connection.datastore.set(uuid, token, {})
       connection.graph.delete_entity(uuid, token)
     end
 
@@ -115,7 +115,7 @@ module Devcenter::Backend
 
     def save
       self.class.ensure_game_is_valid!(self)
-      self.class.connection.datastore.set(:public, uuid, token, {'game' => to_hash(no_graph: true)})
+      self.class.connection.datastore.set(uuid, token, {'game' => to_hash(no_graph: true)})
     end
 
     def developers

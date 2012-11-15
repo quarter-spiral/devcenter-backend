@@ -1,3 +1,7 @@
+# 0.0.20 WIP
+
+* Bumps datastore dependencies to adopt to the new datastore API
+
 # 0.0.19
 
 * Adds screenshots to the publicly available game information

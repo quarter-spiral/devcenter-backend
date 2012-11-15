@@ -342,7 +342,7 @@ describe Devcenter::Backend::API do
     end
 
     it "does not try to modify non-game resources" do
-      @connection.datastore.set(:public, @entity2, token, name: 'Not a game')
+      @connection.datastore.set(@entity2, token, name: 'Not a game')
       response = client.put "/v1/games/#{@entity2}", {}, JSON.dump(name: 'Update')
       data = JSON.parse(response.body)
       data['error'].must_equal "Entity not a game (#{@entity2})"
