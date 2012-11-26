@@ -1,3 +1,7 @@
+# 0.0.22 WIP
+
+* Forces new graph-client version
+
 # 0.0.21
 
 * Bumps auth-backend and graph-backend for tests

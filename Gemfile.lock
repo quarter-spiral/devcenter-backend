@@ -23,7 +23,7 @@ PATH
       auth-client (>= 0.0.14)
       datastore-client (>= 0.0.9)
       grape (= 0.2.3.qs)
-      graph-client (>= 0.0.7)
+      graph-client (>= 0.0.9)
       json (= 1.7.4)
 
 GEM
