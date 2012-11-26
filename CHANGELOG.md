@@ -1,3 +1,7 @@
+# 0.0.23 WIP
+
+* Makes it possible to retrieve public game data only for the games specified
+
 # 0.0.22
 
 * Forces new graph-client version

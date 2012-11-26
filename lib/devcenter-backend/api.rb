@@ -86,8 +86,12 @@ module Devcenter::Backend
 
     namespace '/public' do
       get '/games' do
+        uuids = params[:games]
+
         games = try_twice_and_avoid_token_expiration do
-          Game.all(token)
+          games = Game.all(token)
+          games = games.select {|g| uuids.include?(g.uuid)} if uuids
+          games
         end
 
         {'games' => games.map {|game| game.public_information}}

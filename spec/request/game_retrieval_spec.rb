@@ -83,6 +83,22 @@ describe Devcenter::Backend::API do
         game3['name'].must_equal @game_data3['name']
         game3['description'].must_equal @game_data3['description']
       end
+
+      it "can retrieve a list of certain games" do
+        response = client.get "/v1/public/games", {}, JSON.dump(games: [@game_uuid1, @game_uuid3])
+        response.status.must_equal 200
+
+        games = JSON.parse(response.body)['games']
+        games.size.must_equal 2
+
+        game1 = games.detect {|g| g['uuid'] == @game_uuid1}
+        game1['name'].must_equal @game_data1['name']
+        game1['description'].must_equal @game_data1['description']
+
+        game3 = games.detect {|g| g['uuid'] == @game_uuid3}
+        game3['name'].must_equal @game_data3['name']
+        game3['description'].must_equal @game_data3['description']
+      end
     end
   end
 end
