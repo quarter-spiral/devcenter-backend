@@ -1,4 +1,4 @@
-# 0.0.23 WIP
+# 0.0.23
 
 * Makes it possible to retrieve public game data only for the games specified
 
