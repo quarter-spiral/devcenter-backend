@@ -1,4 +1,4 @@
-# 0.0.21 WIP
+# 0.0.21
 
 * Bumps auth-backend and graph-backend for tests
 
