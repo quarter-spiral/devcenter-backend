@@ -1,4 +1,4 @@
-# 0.0.22 WIP
+# 0.0.22
 
 * Forces new graph-client version
 
