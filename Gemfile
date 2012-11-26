@@ -15,7 +15,7 @@ end
 
 group :development, :test do
   #gem 'graph-backend', path: '../graph-backend'
-  gem 'graph-backend', '0.0.11'
+  gem 'graph-backend', '0.0.14'
 
   #gem 'datastore-backend', path: '../datastore-backend'
   gem 'datastore-backend', '0.0.11'
@@ -25,7 +25,7 @@ group :development, :test do
   gem 'rake'
   gem 'uuid'
 
-  gem 'auth-backend', "~> 0.0.10"
+  gem 'auth-backend', "~> 0.0.15"
   gem 'sqlite3'
   gem 'sinatra_warden', git: 'https://github.com/quarter-spiral/sinatra_warden.git'
   gem 'songkick-oauth2-provider', git: 'https://github.com/quarter-spiral/oauth2-provider.git'
