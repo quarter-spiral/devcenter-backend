@@ -1,4 +1,4 @@
-# 0.0.24 WIP
+# 0.0.24
 
 * Adds game secrets
 
