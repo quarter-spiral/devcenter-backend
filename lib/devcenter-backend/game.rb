@@ -4,7 +4,7 @@ module Devcenter::Backend
 
     attr_accessor :uuid, :name, :description
     attr_writer :configuration, :screenshots, :developer_configuration
-    attr_reader :original_attributes, :token
+    attr_reader :original_attributes, :token, :secret
 
     def self.create(token, params)
       developers = params.delete :developers
@@ -32,6 +32,8 @@ module Devcenter::Backend
       params.delete(:developers)
       raw_update_from_hash(params)
 
+      generate_secret! unless secret
+
       @original_attributes = to_hash(no_graph: true)
     end
 
@@ -57,7 +59,7 @@ module Devcenter::Backend
     end
 
     def to_hash(options = {})
-      hash = {uuid: uuid, name: name, description: description, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration}
+      hash = {uuid: uuid, name: name, description: description, secret: secret, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration}
 
       hash[:developers] = developers unless options[:no_graph]
       hash[:venues] = options[:no_graph] ? venues : venues_with_computed_config
@@ -86,7 +88,7 @@ module Devcenter::Backend
 
     def update_from_hash(hash)
       unassignable_keys = hash.keys.select {|k| !MASS_ASSIGNABLE_ATTRIBUTES.include?(k.to_sym)}
-      raise Error.new("Can not mass update: #{unassignable_keys.join(',')}!") unless unassignable_keys.empty?
+      raise Error::ValidationError.new("Can not mass update: #{unassignable_keys.join(',')}!") unless unassignable_keys.empty?
       raw_update_from_hash(hash)
     end
 
@@ -158,6 +160,14 @@ module Devcenter::Backend
         value = value.to_hash if value.kind_of?(Hash)
         self.send("#{key}=", value)
       end
+    end
+
+    def generate_secret!
+      @secret = File.read('/dev/urandom', 32).bytes.map {|e| (e.ord % 64 + 63).chr}.join('')
+    end
+
+    def secret=(secret)
+      @secret = secret
     end
 
     def self.connection

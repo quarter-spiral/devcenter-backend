@@ -3,6 +3,7 @@ require_relative '../request_spec_helper.rb'
 
 require 'json'
 require 'uuid'
+require 'uri'
 
 describe Devcenter::Backend::API do
   before do
@@ -90,6 +91,79 @@ describe Devcenter::Backend::API do
 
       response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"})
       response.status.must_equal 201
+    end
+
+    describe "secret" do
+      before do
+        client.post "/v1/developers/#{@entity1}"
+        response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"})
+        @game = JSON.parse(response.body)
+      end
+
+      it "enures that each game has it" do
+        secret = @game['secret']
+        secret.wont_be_nil
+
+        game = JSON.parse(client.get("/v1/games/#{@game['uuid']}").body)
+        game['secret'].must_equal secret
+
+        response = client.post "/v1/games", {}, JSON.dump(name: "Test Game 2", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"})
+        game2 = JSON.parse(response.body)
+        game2['secret'].wont_be_nil
+        game2['secret'].wont_equal secret
+      end
+
+      it "can't be changed" do
+        response = client.put "/v1/games/#{@game['uuid']}", {}, JSON.dump(name: 'Updated Game', secret: 'bla')
+        updated_game = JSON.parse(response.body)
+        updated_game['name'].must_equal 'Updated Game'
+        updated_game['secret'].wont_equal 'bla'
+        updated_game['secret'].must_equal @game['secret']
+
+        updated_game = JSON.parse(client.get("/v1/games/#{@game['uuid']}").body)
+        updated_game['name'].must_equal 'Updated Game'
+        updated_game['secret'].wont_equal 'bla'
+        updated_game['secret'].must_equal @game['secret']
+      end
+
+      it "can be chosen on creation" do
+        chosen_secret = @game['secret'].reverse
+        response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", secret: chosen_secret, developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"})
+        game2 = JSON.parse(response.body)
+        game2['secret'].wont_be_nil
+        game2['secret'].wont_equal chosen_secret
+
+        got_game = JSON.parse(client.get("/v1/games/#{game2['uuid']}").body)
+        got_game['secret'].wont_equal chosen_secret
+        got_game['secret'].must_equal game2['secret']
+      end
+
+      it "is generated on demand for games that lack a secret" do
+        connection = Devcenter::Backend::Connection.create
+        game_data = connection.datastore.get(@game['uuid'], token)
+        secret = game_data['game']['secret']
+        secret.wont_be_nil
+        game_data['game'].delete 'secret'
+        connection.datastore.set(game_data['game']['uuid'], token, game_data)
+        game_data = connection.datastore.get(game_data['game']['uuid'], token)
+        game_data['game']['secret'].must_be_nil
+
+        game = JSON.parse(client.get("/v1/games/#{game_data['game']['uuid']}").body)
+        game['secret'].wont_be_nil
+        game['secret'].wont_equal secret
+      end
+
+      it "is not included in the public data" do
+        secret = JSON.parse(client.get("/v1/games/#{@game['uuid']}").body)['secret']
+        secret.wont_be_nil
+
+        response = client.get "/v1/public/games?games=#{URI.escape(JSON.dump([@game['uuid']]))}"
+        public_data = JSON.parse(response.body)
+        public_data['games'].size.must_equal 1
+        game = public_data['games'].first
+        game['uuid'].must_equal @game['uuid']
+        game.values.include?(secret).must_equal false
+      end
     end
 
     describe "game types" do

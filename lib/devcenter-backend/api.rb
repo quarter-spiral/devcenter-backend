@@ -48,7 +48,7 @@ module Devcenter::Backend
 
       def sheer_params(*additional_fields_to_delete)
         sheer_params = params.clone
-        ([:version, :route_info] + additional_fields_to_delete).each do |field|
+        ([:version, :route_info, :secret] + additional_fields_to_delete).each do |field|
           sheer_params.delete field
         end
         sheer_params
