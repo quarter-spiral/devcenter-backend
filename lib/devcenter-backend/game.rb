@@ -44,6 +44,8 @@ module Devcenter::Backend
 
       game = new(token, data['game'])
       game.uuid = uuid
+      # Todo: Remove rolling migration
+      game.save unless data['secret']
       game
     end
 

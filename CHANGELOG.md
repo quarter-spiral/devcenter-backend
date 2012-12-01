@@ -1,3 +1,7 @@
+# 0.0.25 WIP
+
+* Fixes bug so that rolling migrated game secrets are persisted
+
 # 0.0.24
 
 * Adds game secrets

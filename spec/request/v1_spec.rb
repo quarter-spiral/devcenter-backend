@@ -149,8 +149,12 @@ describe Devcenter::Backend::API do
         game_data['game']['secret'].must_be_nil
 
         game = JSON.parse(client.get("/v1/games/#{game_data['game']['uuid']}").body)
-        game['secret'].wont_be_nil
-        game['secret'].wont_equal secret
+        newly_generated_secret = game['secret']
+        newly_generated_secret.wont_be_nil
+        newly_generated_secret.wont_equal secret
+
+        game = JSON.parse(client.get("/v1/games/#{game_data['game']['uuid']}").body)
+        game['secret'].must_equal newly_generated_secret
       end
 
       it "is not included in the public data" do
