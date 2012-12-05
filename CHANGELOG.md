@@ -1,3 +1,7 @@
+# 0.0.26 WIP
+
+* Adds venue information to public game info
+
 # 0.0.25
 
 * Fixes bug so that rolling migrated game secrets are persisted

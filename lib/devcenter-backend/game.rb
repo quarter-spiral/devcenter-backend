@@ -69,7 +69,8 @@ module Devcenter::Backend
     end
 
     def public_information
-      {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots}
+      ready_venues = venues_with_computed_config.select {|venue, config| config['enabled'] && config['computed']['ready']}.map {|venue, config| venue}
+      {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots, 'venues' => ready_venues}
     end
 
     def adjust_developers(new_developers)
