@@ -27,7 +27,7 @@ module Devcenter::Backend
     end
 
     rescue_from Devcenter::Backend::Error::BaseError do |e|
-      API.logger.warn "Error! #{e.class.name} - #{e.message}"
+      API.logger.fatal "Error! #{e.class.name} - #{e.message}\n\t#{e.backtrace.join("\n\t")}"
       [500, {'Content-Type' => 'application/json'}, [JSON.dump(error: e.message)]]
     end
     rescue_from Devcenter::Backend::Error::ValidationError do |e|

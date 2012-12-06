@@ -15,9 +15,9 @@ module Devcenter
     def self.log_level
       case ENV['RACK_ENV']
       when 'production'
-        Logger::FATAL
+        Logger::INFO
       when 'test'
-        Logger::FATAL
+        Logger::INFO
       else
         Logger::INFO
       end
