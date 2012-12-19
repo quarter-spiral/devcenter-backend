@@ -1,4 +1,4 @@
-# 0.0.27 WIP
+# 0.0.27
 
 * Adds Newrelic monitoring and ping middleware
 
