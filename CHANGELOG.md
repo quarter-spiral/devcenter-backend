@@ -1,3 +1,7 @@
+# 0.0.27 WIP
+
+* Adds Newrelic monitoring and ping middleware
+
 # 0.0.26
 
 * Adds venue information to public game info
