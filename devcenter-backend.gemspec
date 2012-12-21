@@ -20,6 +20,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'datastore-client', '>=0.0.9'
   gem.add_dependency 'graph-client', '>=0.0.9'
   gem.add_dependency 'auth-client', '>=0.0.14'
-  gem.add_dependency 'newrelic_rpm', '~> 3.5.4.33'
   gem.add_dependency 'ping-middleware', '~> 0.0.2'
+  gem.add_dependency 'grape_newrelic', '~> 0.0.3'
 end
