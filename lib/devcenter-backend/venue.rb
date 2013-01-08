@@ -1,6 +1,7 @@
 require 'devcenter-backend/venue/base'
 require 'devcenter-backend/venue/facebook'
 require 'devcenter-backend/venue/spiral_galaxy'
+require 'devcenter-backend/venue/embedded'
 
 module Devcenter::Backend
   module Venue

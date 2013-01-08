@@ -102,6 +102,23 @@ describe "Game Venues" do
       config = JSON.parse(response.body)
       config['venues']['spiral-galaxy']['enabled'].must_equal(false)
     end
+
+    it "can add and remove embedded venue" do
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'embedded' => {enabled: true}})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      config['venues']['embedded']['enabled'].must_equal(true)
+
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'embedded' => {enabled: false}})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      config['venues']['embedded']['enabled'].must_equal(false)
+
+      client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: {enabled: true}})
+      response = client.get "/v1/games/#{@game}"
+      config = JSON.parse(response.body)
+      config['venues']['embedded']['enabled'].must_equal(false)
+    end
   end
 end
 

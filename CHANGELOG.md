@@ -1,3 +1,7 @@
+# 0.0.29 WIP
+
+* Adds embedded venue
+
 # 0.0.28
 
 * Improve Newrelic instrumenting
