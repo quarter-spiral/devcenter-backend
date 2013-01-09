@@ -320,4 +320,14 @@ Currently available venues.
 
 **Key**: ``spiral-galaxy``
 
+A Quarter Spiral game portal.
+
+
+#### Embedded
+
+**Key**: ``embedded``
+
 A white-label venue to embed your game on any website.
+
+Comes with a ``code`` value in the computed configuration that has the complete embed code you need to embed in your website.
+

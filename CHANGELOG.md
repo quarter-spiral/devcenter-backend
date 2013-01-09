@@ -1,3 +1,7 @@
+# 0.0.30 WIP
+
+* Adds embed codes to the embedded venue's computed config
+
 # 0.0.29
 
 * Adds embedded venue

@@ -73,3 +73,5 @@ ENV['QS_OAUTH_CLIENT_ID'] = oauth_app[:id]
 ENV['QS_OAUTH_CLIENT_SECRET'] = oauth_app[:secret]
 
 APP_TOKEN = Devcenter::Backend::Connection.create.auth.create_app_token(oauth_app[:id], oauth_app[:secret])
+
+QS_CANVAS_APP_URL = 'http://example.com/canvas'
