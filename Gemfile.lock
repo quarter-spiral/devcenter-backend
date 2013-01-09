@@ -19,7 +19,7 @@ GIT
 PATH
   remote: .
   specs:
-    devcenter-backend (0.0.29)
+    devcenter-backend (0.0.30)
       auth-client (>= 0.0.14)
       datastore-client (>= 0.0.9)
       grape (= 0.2.3.qs)
@@ -149,7 +149,7 @@ GEM
       os (>= 0.9.6)
       rake (>= 0.8.7)
       rubyzip (>= 0.9.7)
-    newrelic_rpm (3.5.4.33)
+    newrelic_rpm (3.5.4.34)
     nokogiri (1.5.5)
     nokogiri (1.5.5-java)
     os (0.9.6)
