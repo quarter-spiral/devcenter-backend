@@ -70,7 +70,7 @@ module Devcenter::Backend
     end
 
     before do
-      header('Access-Control-Allow-Origin', '*')
+      header('Access-Control-Allow-Origin', request.env['HTTP_ORIGIN'] || '*')
 
       unless request.request_method == 'OPTIONS' || request.path_info =~ /^\/public\//
         error!('Unauthenticated', 403) unless request.env['HTTP_AUTHORIZATION']

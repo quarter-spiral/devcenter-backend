@@ -1,3 +1,7 @@
+# 0.0.31 WIP
+
+* Fixes CORS headers
+
 # 0.0.30
 
 * Adds embed codes to the embedded venue's computed config
