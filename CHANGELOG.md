@@ -1,4 +1,4 @@
-# 0.0.32 WIP
+# 0.0.32
 
 * Adds embed code to public game information
 
