@@ -1,3 +1,7 @@
+# 0.0.32 WIP
+
+* Adds embed code to public game information
+
 # 0.0.31
 
 * Fixes CORS headers

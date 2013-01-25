@@ -108,20 +108,20 @@ describe "Game Venues" do
       response = client.get "/v1/games/#{@game}"
       config = JSON.parse(response.body)
       config['venues']['embedded']['enabled'].must_equal(true)
-      config['venues']['embedded']['code'].wont_be_nil
-      config['venues']['embedded']['code'].must_equal %Q{<iframe width="600" height="600" src="#{ENV['QS_CANVAS_APP_URL']}/v1/games/#{@game}/embedded" style="padding:0px; margin:0px; background-color:#000; border-width:0px;" frameborder="0" align="top"></iframe>}
+      config['venues']['embedded']['computed']['code'].wont_be_nil
+      config['venues']['embedded']['computed']['code'].must_equal %Q{<iframe width="600" height="600" src="#{ENV['QS_CANVAS_APP_URL']}/v1/games/#{@game}/embedded" style="padding:0px; margin:0px; background-color:#000; border-width:0px;" frameborder="0" align="top"></iframe>}
 
       client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'embedded' => {enabled: false}})
       response = client.get "/v1/games/#{@game}"
       config = JSON.parse(response.body)
       config['venues']['embedded']['enabled'].must_equal(false)
-      config['venues']['embedded']['code'].must_be_nil
+      config['venues']['embedded']['computed']['code'].must_be_nil
 
       client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {facebook: {enabled: true}})
       response = client.get "/v1/games/#{@game}"
       config = JSON.parse(response.body)
       config['venues']['embedded']['enabled'].must_equal(false)
-      config['venues']['embedded']['code'].must_be_nil
+      config['venues']['embedded']['computed']['code'].must_be_nil
     end
   end
 end
