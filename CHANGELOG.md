@@ -1,3 +1,7 @@
+# 0.0.33
+
+* Migrates game retrieval of developers to new batch API
+
 # 0.0.32
 
 * Adds embed code to public game information
