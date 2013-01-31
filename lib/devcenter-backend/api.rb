@@ -112,7 +112,8 @@ module Devcenter::Backend
       end
 
       get '/:uuid/games' do
-        connection.graph.list_related_entities(params[:uuid], @token, 'develops')
+        game_uuids = connection.graph.list_related_entities(params[:uuid], @token, 'develops')
+        Hash[Game.find_batch(game_uuids, @token).map {|uuid, game| [uuid, game.to_hash]}]
       end
     end
 

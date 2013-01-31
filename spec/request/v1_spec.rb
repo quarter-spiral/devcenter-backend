@@ -138,25 +138,6 @@ describe Devcenter::Backend::API do
         got_game['secret'].must_equal game2['secret']
       end
 
-      it "is generated on demand for games that lack a secret" do
-        connection = Devcenter::Backend::Connection.create
-        game_data = connection.datastore.get(@game['uuid'], token)
-        secret = game_data['game']['secret']
-        secret.wont_be_nil
-        game_data['game'].delete 'secret'
-        connection.datastore.set(game_data['game']['uuid'], token, game_data)
-        game_data = connection.datastore.get(game_data['game']['uuid'], token)
-        game_data['game']['secret'].must_be_nil
-
-        game = JSON.parse(client.get("/v1/games/#{game_data['game']['uuid']}").body)
-        newly_generated_secret = game['secret']
-        newly_generated_secret.wont_be_nil
-        newly_generated_secret.wont_equal secret
-
-        game = JSON.parse(client.get("/v1/games/#{game_data['game']['uuid']}").body)
-        game['secret'].must_equal newly_generated_secret
-      end
-
       it "is not included in the public data" do
         secret = JSON.parse(client.get("/v1/games/#{@game['uuid']}").body)['secret']
         secret.wont_be_nil
@@ -245,9 +226,9 @@ describe Devcenter::Backend::API do
       client.post "/v1/developers/#{@entity2}"
 
       response = client.get "/v1/developers/#{@entity1}/games"
-      JSON.parse(response.body).must_equal []
+      JSON.parse(response.body).must_equal({})
       response = client.get "/v1/developers/#{@entity2}/games"
-      JSON.parse(response.body).must_equal []
+      JSON.parse(response.body).must_equal({})
 
       response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game1"})
       uuid1 = JSON.parse(response.body)['uuid']
@@ -263,17 +244,30 @@ describe Devcenter::Backend::API do
 
       response = client.get "/v1/developers/#{@entity1}/games"
       games_of_entity1 =JSON.parse(response.body)
-      games_of_entity1.must_include uuid1
-      games_of_entity1.wont_include uuid2
-      games_of_entity1.must_include uuid3
-      games_of_entity1.must_include uuid4
+
+      games_of_entity1.keys.must_include uuid1
+      games_of_entity1.keys.wont_include uuid2
+      games_of_entity1.keys.must_include uuid3
+      games_of_entity1.keys.must_include uuid4
 
       response = client.get "/v1/developers/#{@entity2}/games"
       games_of_entity2 =JSON.parse(response.body)
-      games_of_entity2.wont_include uuid1
-      games_of_entity2.must_include uuid2
-      games_of_entity2.wont_include uuid3
-      games_of_entity2.must_include uuid4
+      games_of_entity2.keys.wont_include uuid1
+      games_of_entity2.keys.must_include uuid2
+      games_of_entity2.keys.wont_include uuid3
+      games_of_entity2.keys.must_include uuid4
+
+      games_of_entity2[uuid2]['uuid'].must_equal uuid2
+      games_of_entity2[uuid2]['name'].must_equal 'Test Game2'
+      games_of_entity2[uuid2]['configuration']['type'].must_equal 'html5'
+      games_of_entity2[uuid2]['configuration']['url'].must_equal 'http://example.com/game2'
+      games_of_entity2[uuid2]['secret'].wont_be_nil
+
+      games_of_entity2[uuid4]['uuid'].must_equal uuid4
+      games_of_entity2[uuid4]['name'].must_equal 'Test Game4'
+      games_of_entity2[uuid4]['configuration']['type'].must_equal 'html5'
+      games_of_entity2[uuid4]['configuration']['url'].must_equal 'http://example.com/game4'
+      games_of_entity2[uuid4]['secret'].wont_be_nil
     end
 
     it "can delete games" do
@@ -363,7 +357,7 @@ describe Devcenter::Backend::API do
       response = client.get "/v1/developers/#{@entity1}/games"
       JSON.parse(response.body).must_include game
       response = client.get "/v1/developers/#{@entity2}/games"
-      JSON.parse(response.body).must_equal []
+      JSON.parse(response.body).must_equal({})
       response = client.get "/v1/developers/#{@entity3}/games"
       JSON.parse(response.body).must_include game
     end

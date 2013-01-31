@@ -101,7 +101,20 @@ Empty.
 
 ###### Body
 
-JSON encoded array of UUIDs of his games.
+JSON encoded object with the game's UUIDs as the key and the game information as the value. See ``Change a game's configuration`` response section for an example payload for each game. General structure looks like this:
+
+```javascript
+{
+  "some-uuid": {
+    "uuid": "some-uuid",
+    "name": "Some Game",
+    …
+  },
+  "some-other-uuid": {
+    …
+  }
+}
+```
 
 #### Adding a game
 

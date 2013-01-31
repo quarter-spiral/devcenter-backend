@@ -44,9 +44,17 @@ module Devcenter::Backend
 
       game = new(token, data['game'])
       game.uuid = uuid
-      # Todo: Remove rolling migration
-      game.save unless data['secret']
       game
+    end
+
+    def self.find_batch(uuids, token)
+      games = connection.datastore.get(uuids, token)
+      return {} unless games
+      Hash[games.map do |uuid, data|
+        game = new(token, data['game'])
+        game.uuid = uuid
+        [uuid, game]
+      end]
     end
 
     def self.all(token)

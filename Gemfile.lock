@@ -21,7 +21,7 @@ PATH
   specs:
     devcenter-backend (0.0.32)
       auth-client (>= 0.0.14)
-      datastore-client (>= 0.0.9)
+      datastore-client (>= 0.0.10)
       grape (= 0.2.3.qs)
       grape_newrelic (~> 0.0.3)
       graph-client (>= 0.0.9)
@@ -72,21 +72,22 @@ GEM
     bcrypt-ruby (3.0.1)
     bcrypt-ruby (3.0.1-java)
     bson (1.7.1)
-    bson (1.7.1-java)
     bson_ext (1.7.1)
       bson (~> 1.7.1)
     builder (3.0.4)
     commander (4.1.2)
       highline (~> 1.6.11)
     daemons (1.1.9)
-    datastore-backend (0.0.11)
+    datastore-backend (0.0.14)
       auth-client (>= 0.0.6)
       grape (= 0.2.3.qs)
+      grape_newrelic (~> 0.0.3)
       json (= 1.7.4)
       mongoid (= 2.4.11)
+      ping-middleware (~> 0.0.2)
       rack-jsonp-middleware (= 0.0.5)
       uuid
-    datastore-client (0.0.9)
+    datastore-client (0.0.10)
       commander
       json
       service-client (>= 0.0.7)
@@ -224,7 +225,7 @@ PLATFORMS
 DEPENDENCIES
   auth-backend (~> 0.0.15)
   bson_ext
-  datastore-backend (= 0.0.11)
+  datastore-backend (= 0.0.14)
   devcenter-backend!
   graph-backend (= 0.0.14)
   nokogiri
