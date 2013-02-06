@@ -33,7 +33,7 @@ module Devcenter::Backend
       raw_update_from_hash(params)
 
       #TODO: Remove rolling migration
-      category = 'None' unless category
+      self.category = 'None' unless category
 
       generate_secret! unless secret
 
