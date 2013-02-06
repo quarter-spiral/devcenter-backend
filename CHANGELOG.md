@@ -1,4 +1,4 @@
-# 0.0.35 WIP
+# 0.0.35
 
 * Fixes rolling migration of game categories
 
