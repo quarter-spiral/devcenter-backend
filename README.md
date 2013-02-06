@@ -128,6 +128,7 @@ JSON encoded options hash.
 
 - **name** [REQUIRED]: Name of the game
 - **description** [REQUIRED]: Text describing the game
+- **category** [REQUIRED]: Category of the game
 - **configuration** [REQUIRED]: Hash that describes the game. Must include the key ``type`` which can be either ``html5`` or ``flash``.
 - **developers** [REQUIRED]: Array of UUIDs of the developers of this game
 - **screenshots** [OPTIONAL]: Array of image URLs of screenshots of the game
@@ -228,6 +229,7 @@ JSON encoded options hash.
 
 - **name** [OPTIONAL]: Name of the game
 - **description** [OPTIONAL]: Text describing the game
+- **category** [OPTIONAL]: Category of a game
 - **configuration** [REQUIRED]: Hash that describes the game. See [Game
   Types](#game-types) for more information.
 - **developers** [OPTIONAL]: Array of UUIDs of the developers of this game
@@ -248,6 +250,7 @@ JSON encoded hash of the game's configuration. Example:
 {
   "name": "Nonsense's Tale",
   "description": "Rumble your way to the treasures of Cpt. McDoodle and his crew. Fight parrots, barrels and pirates!",
+  "category": "Jump n Run",
   "configuration": {"type": "html5", "url": "http://example.com/game"},
   "developers": ["eb6d96b0-cb55-012f-4393-58b035f5cdfb", "ebc08260-cb55-012f-4394-58b035f5cdfb"],
   "screenshots": ["http://example.com/nonsense/1.jpg", "http://example.com/nonsense/2.jpg"],

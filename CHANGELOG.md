@@ -1,3 +1,7 @@
+# 0.0.34 WIP
+
+* Adds categories to games
+
 # 0.0.33
 
 * Migrates game retrieval of developers to new batch API

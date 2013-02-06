@@ -39,7 +39,7 @@ describe Devcenter::Backend::API do
 
       client.post "/v1/developers/#{@entity1}"
 
-      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"})
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"}, category: 'Jump n Run')
       response.status.must_equal 201
 
       uuid = JSON.parse(response.body)['uuid']
@@ -56,13 +56,13 @@ describe Devcenter::Backend::API do
       client.post   "/v1/developers/#{@entity1}"
       client.delete "/v1/developers/#{@entity1}"
 
-      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1])
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], category: 'Jump n Run')
       response.status.wont_equal 201
 
       @connection.graph.uuids_by_role(token, 'game').size.must_equal old_games.size
     end
 
-    it "ensures that games can only be created with a name, a description, at least one developer and a configuration with a type" do
+    it "ensures that games can only be created with a name, a description, at least one developer, a configuration with a type and a category" do
       client.post "/v1/developers/#{@entity1}"
 
       response = client.post "/v1/games", {}, JSON.dump(description: "A good game", developers: [@entity1])
@@ -90,13 +90,16 @@ describe Devcenter::Backend::API do
       response.status.wont_equal 201
 
       response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"})
+      response.status.wont_equal 201
+
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"}, category: "Jump n Run")
       response.status.must_equal 201
     end
 
     describe "secret" do
       before do
         client.post "/v1/developers/#{@entity1}"
-        response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"})
+        response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"}, category: 'Jump n Run')
         @game = JSON.parse(response.body)
       end
 
@@ -107,7 +110,7 @@ describe Devcenter::Backend::API do
         game = JSON.parse(client.get("/v1/games/#{@game['uuid']}").body)
         game['secret'].must_equal secret
 
-        response = client.post "/v1/games", {}, JSON.dump(name: "Test Game 2", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"})
+        response = client.post "/v1/games", {}, JSON.dump(name: "Test Game 2", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"}, category: 'Jump n Run')
         game2 = JSON.parse(response.body)
         game2['secret'].wont_be_nil
         game2['secret'].wont_equal secret
@@ -128,7 +131,7 @@ describe Devcenter::Backend::API do
 
       it "can be chosen on creation" do
         chosen_secret = @game['secret'].reverse
-        response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", secret: chosen_secret, developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"})
+        response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", secret: chosen_secret, developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"}, category: 'Jump n Run')
         game2 = JSON.parse(response.body)
         game2['secret'].wont_be_nil
         game2['secret'].wont_equal chosen_secret
@@ -153,7 +156,7 @@ describe Devcenter::Backend::API do
 
     describe "game types" do
       before do
-        @game = {name: "Test Game", description: "A good game", developers: [@entity1]}
+        @game = {name: "Test Game", description: "A good game", developers: [@entity1], category: 'Jump n Run'}
         client.post "/v1/developers/#{@entity1}"
       end
       it "does not allow bullshit" do
@@ -230,16 +233,16 @@ describe Devcenter::Backend::API do
       response = client.get "/v1/developers/#{@entity2}/games"
       JSON.parse(response.body).must_equal({})
 
-      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game1"})
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game1"}, category: 'Jump n Run')
       uuid1 = JSON.parse(response.body)['uuid']
 
-      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game2", description: "A good game", developers: [@entity2], configuration: {type: "html5", url: "http://example.com/game2"})
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game2", description: "A good game", developers: [@entity2], configuration: {type: "html5", url: "http://example.com/game2"}, category: 'Jump n Run')
       uuid2 = JSON.parse(response.body)['uuid']
 
-      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game3", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game3"})
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game3", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game3"}, category: 'Jump n Run')
       uuid3 = JSON.parse(response.body)['uuid']
 
-      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game4", description: "A good game", developers: [@entity2, @entity1], configuration: {type: "html5", url: "http://example.com/game4"})
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game4", description: "A good game", developers: [@entity2, @entity1], configuration: {type: "html5", url: "http://example.com/game4"}, category: 'Jump n Run')
       uuid4 = JSON.parse(response.body)['uuid']
 
       response = client.get "/v1/developers/#{@entity1}/games"
@@ -275,7 +278,7 @@ describe Devcenter::Backend::API do
       client.post "/v1/developers/#{@entity2}"
 
 
-      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"})
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"}, category: 'Jump n Run')
       uuid1 = JSON.parse(response.body)['uuid']
 
       response = client.get "/v1/developers/#{@entity1}/games"
@@ -310,7 +313,7 @@ describe Devcenter::Backend::API do
       client.post "/v1/developers/#{@entity2}"
       client.post "/v1/developers/#{@entity3}"
 
-      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"})
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"}, category: 'Jump n Run')
       game = JSON.parse(response.body)['uuid']
 
       response = client.get "/v1/games/#{game}"
@@ -366,7 +369,7 @@ describe Devcenter::Backend::API do
       client.post "/v1/developers/#{@entity1}"
       client.post "/v1/developers/#{@entity2}"
 
-      game_data = {name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"}}
+      game_data = {name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"}, category: 'Jump n Run'}
       response = client.post "/v1/games", {}, JSON.dump(game_data)
       game = JSON.parse(response.body)['uuid']
 
@@ -383,7 +386,7 @@ describe Devcenter::Backend::API do
       client.post "/v1/developers/#{@entity1}"
       client.post "/v1/developers/#{@entity2}"
 
-      game_data = {name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"}}
+      game_data = {name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: "html5", url: "http://example.com/game"}, category: 'Jump n Run'}
       response = client.post "/v1/games", {}, JSON.dump(game_data)
       game = JSON.parse(response.body)['uuid']
 
@@ -400,7 +403,7 @@ describe Devcenter::Backend::API do
       client.post "/v1/developers/#{@entity1}"
       client.post "/v1/developers/#{@entity2}"
 
-      game_data = {name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"}}
+      game_data = {name: "Test Game", description: "A good game", developers: [@entity1, @entity2], configuration: {type: "html5", url: "http://example.com/game"}, category: 'Jump n Run'}
       response = client.post "/v1/games", {}, JSON.dump(game_data)
       game = JSON.parse(response.body)['uuid']
 

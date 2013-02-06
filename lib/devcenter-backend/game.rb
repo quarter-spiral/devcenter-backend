@@ -1,8 +1,8 @@
 module Devcenter::Backend
   class Game
-    MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues]
+    MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues, :category]
 
-    attr_accessor :uuid, :name, :description
+    attr_accessor :uuid, :name, :description, :category
     attr_writer :configuration, :screenshots, :developer_configuration
     attr_reader :original_attributes, :token, :secret
 
@@ -31,6 +31,9 @@ module Devcenter::Backend
       @new_game = params.delete(:new_game)
       params.delete(:developers)
       raw_update_from_hash(params)
+
+      #TODO: Remove rolling migration
+      category = 'None' unless category
 
       generate_secret! unless secret
 
@@ -69,7 +72,7 @@ module Devcenter::Backend
     end
 
     def to_hash(options = {})
-      hash = {uuid: uuid, name: name, description: description, secret: secret, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration}
+      hash = {uuid: uuid, name: name, description: description, secret: secret, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration, category: category}
 
       hash[:developers] = developers unless options[:no_graph]
       hash[:venues] = options[:no_graph] ? venues : venues_with_computed_config
@@ -78,7 +81,7 @@ module Devcenter::Backend
 
     def public_information
       ready_venues = venues_with_computed_config.select {|venue, config| config['enabled'] && config['computed']['ready']}.map {|venue, config| venue}
-      info = {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots, 'venues' => ready_venues}
+      info = {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots, 'venues' => ready_venues, 'category' => category}
 
       if venues_with_computed_config['embedded'] && venues_with_computed_config['embedded']['computed'] && venues_with_computed_config['embedded']['computed']['code']
         info['embed'] = venues_with_computed_config['embedded']['computed']['code']
@@ -117,7 +120,9 @@ module Devcenter::Backend
     end
 
     def valid?
-      raise Error::ValidationError.new("Games must have a name and a description!") unless name.to_s !~ /^\s*$/ && description.to_s !~ /^\s*$/
+      raise Error::ValidationError.new("Games must have a name!") unless name.to_s !~ /^\s*$/
+      raise Error::ValidationError.new("Game must have a description!") unless description.to_s !~ /^\s*$/
+      raise Error::ValidationError.new("Game must have a category!") unless category.to_s !~ /^\s*$/
       raise Error::ValidationError.new("Game configuration invalid!") unless GameType.valid?(self)
 
       Venue.validate_game(self)
