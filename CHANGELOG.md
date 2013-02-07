@@ -1,3 +1,7 @@
+# 0.0.36 WIP
+
+* Performance improvements for the public games list
+
 # 0.0.35
 
 * Fixes rolling migration of game categories

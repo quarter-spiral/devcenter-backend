@@ -60,9 +60,10 @@ module Devcenter::Backend
       end]
     end
 
-    def self.all(token)
-      game_uuids = connection.graph.uuids_by_role(token, 'game')
-      game_uuids.map {|game_uuid| find(game_uuid, token)}
+    def self.all(token, options = {})
+      game_uuids = options[:uuids] || connection.graph.uuids_by_role(token, 'game')
+
+      find_batch(game_uuids, token).values
     end
 
     def destroy
