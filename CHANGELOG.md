@@ -1,4 +1,4 @@
-# 0.0.37 WIP
+# 0.0.37
 
 * Fixes bug that allowed games to be created without a category
 
