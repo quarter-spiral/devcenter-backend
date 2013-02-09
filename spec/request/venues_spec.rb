@@ -14,7 +14,7 @@ describe "Game Venues" do
     before do
       AuthenticationInjector.token = token
 
-      @game_data = {name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: 'initial'}}
+      @game_data = {name: "Test Game", description: "A good game", developers: [@entity1], configuration: {type: 'initial'}, category: "Jump n run"}
       client.post "/v1/developers/#{@entity1}"
       response = client.post "/v1/games", {}, JSON.dump(@game_data)
       @game = JSON.parse(response.body)['uuid']

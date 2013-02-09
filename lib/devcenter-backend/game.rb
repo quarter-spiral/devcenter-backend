@@ -9,6 +9,8 @@ module Devcenter::Backend
     def self.create(token, params)
       developers = params.delete :developers
 
+      raise Error::BaseError.new("Game cannot be created without a category") unless params[:category]
+
       game = new(token, params.merge(new_game: true))
 
       ensure_enough_developers!(developers)

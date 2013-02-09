@@ -1,3 +1,7 @@
+# 0.0.37 WIP
+
+* Fixes bug that allowed games to be created without a category
+
 # 0.0.36
 
 * Performance improvements for the public games list

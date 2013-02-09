@@ -31,6 +31,7 @@ describe Devcenter::Backend::API do
         "description" => "A good game",
         "developers" => [@developer1],
         "configuration" => {type: "html5", url: "http://example.com/game"},
+        "category" => "Jump n run",
         "venues" => {
           "facebook" => {
             "enabled" => true,
@@ -52,6 +53,7 @@ describe Devcenter::Backend::API do
         "description" => "Wow what a game",
         "developers" => [@developer2],
         "configuration" => {type: "html5", url: "http://example.com/game2"},
+        "category" => "Jump n run",
         "venues" => {
           "facebook" => {
             "enabled" => true
@@ -71,6 +73,7 @@ describe Devcenter::Backend::API do
         'description' => "Cool game",
         'developers' => [@developer1],
         'configuration' => {type: "html5", url: "http://example.com/game3"},
+        "category" => "Jump n run",
         "venues" => {
           "facebook" => {
             "enabled" => true,
@@ -93,6 +96,7 @@ describe Devcenter::Backend::API do
         "description" => "A good game",
         "developers" => [@developer1],
         "configuration" => {type: "html5", url: "http://example.com/game"},
+        "category" => "Jump n run",
         "venues" => {
         }
       }
@@ -105,7 +109,8 @@ describe Devcenter::Backend::API do
         "name" => "Fifth Game",
         "description" => "A good game",
         "developers" => [@developer1],
-        "configuration" => {type: "html5", url: "http://example.com/game"}
+        "configuration" => {type: "html5", url: "http://example.com/game"},
+        "category" => "Jump n run",
       }
 
       response = client.post "/v1/games", {"Authorization" => "Bearer #{APP_TOKEN}"}, JSON.dump(@game_data5)
