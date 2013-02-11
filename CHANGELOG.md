@@ -1,4 +1,4 @@
-# 0.0.38 WIP
+# 0.0.38
 
 * Fixes bug when batch retrieving non existent games
 
