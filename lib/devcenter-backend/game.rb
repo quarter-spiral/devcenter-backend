@@ -56,10 +56,11 @@ module Devcenter::Backend
       games = connection.datastore.get(uuids, token)
       return {} unless games
       Hash[games.map do |uuid, data|
+        next unless data['game']
         game = new(token, data['game'])
         game.uuid = uuid
         [uuid, game]
-      end]
+      end.compact]
     end
 
     def self.all(token, options = {})

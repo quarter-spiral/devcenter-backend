@@ -1,3 +1,7 @@
+# 0.0.38 WIP
+
+* Fixes bug when batch retrieving non existent games
+
 # 0.0.37
 
 * Fixes bug that allowed games to be created without a category
