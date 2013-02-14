@@ -1,4 +1,4 @@
-# 0.0.40 WIP
+# 0.0.40
 
 * Adds credit urls for games
 
