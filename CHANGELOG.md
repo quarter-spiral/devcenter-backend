@@ -1,3 +1,7 @@
+# 0.0.39 WIP
+
+* Makes it possible to save a credits line with each game
+
 # 0.0.38
 
 * Fixes bug when batch retrieving non existent games

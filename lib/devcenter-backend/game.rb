@@ -1,8 +1,8 @@
 module Devcenter::Backend
   class Game
-    MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues, :category]
+    MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues, :category, :credits]
 
-    attr_accessor :uuid, :name, :description, :category
+    attr_accessor :uuid, :name, :description, :category, :credits
     attr_writer :configuration, :screenshots, :developer_configuration
     attr_reader :original_attributes, :token, :secret
 
@@ -76,7 +76,7 @@ module Devcenter::Backend
     end
 
     def to_hash(options = {})
-      hash = {uuid: uuid, name: name, description: description, secret: secret, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration, category: category}
+      hash = {uuid: uuid, name: name, description: description, secret: secret, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration, category: category, credits: credits}
 
       hash[:developers] = developers unless options[:no_graph]
       hash[:venues] = options[:no_graph] ? venues : venues_with_computed_config
@@ -85,7 +85,7 @@ module Devcenter::Backend
 
     def public_information
       ready_venues = venues_with_computed_config.select {|venue, config| config['enabled'] && config['computed']['ready']}.map {|venue, config| venue}
-      info = {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots, 'venues' => ready_venues, 'category' => category}
+      info = {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots, 'venues' => ready_venues, 'category' => category, 'credits' => credits}
 
       if venues_with_computed_config['embedded'] && venues_with_computed_config['embedded']['computed'] && venues_with_computed_config['embedded']['computed']['code']
         info['embed'] = venues_with_computed_config['embedded']['computed']['code']

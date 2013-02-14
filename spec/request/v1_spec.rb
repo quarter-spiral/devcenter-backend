@@ -224,6 +224,23 @@ describe Devcenter::Backend::API do
       end
     end
 
+    it "can set a game's credits line" do
+      client.post "/v1/developers/#{@entity1}"
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration:       {type: "html5", url: "http://example.com/game1"}, category: 'Jump n Run')
+      game = JSON.parse(response.body)['uuid']
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits'].must_be_nil
+
+      client.put "/v1/games/#{game}", {}, JSON.dump(credits: "Quarter Spiral Inc.")
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits'].must_equal "Quarter Spiral Inc."
+
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game 2", description: "A good game", developers: [@entity1], configuration:       {type: "html5", url: "http://example.com/game1"}, category: 'Jump n Run', credits: "Quarter Spiral Co.")
+      game = JSON.parse(response.body)['uuid']
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits'].must_equal "Quarter Spiral Co."
+    end
+
     it "can list games of a developer" do
       client.post "/v1/developers/#{@entity1}"
       client.post "/v1/developers/#{@entity2}"
