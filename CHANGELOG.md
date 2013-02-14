@@ -1,4 +1,4 @@
-# 0.0.39 WIP
+# 0.0.39
 
 * Makes it possible to save a credits line with each game
 
