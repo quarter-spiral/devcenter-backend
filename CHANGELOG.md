@@ -1,3 +1,7 @@
+# 0.0.40 WIP
+
+* Adds credit urls for games
+
 # 0.0.39
 
 * Makes it possible to save a credits line with each game

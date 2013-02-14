@@ -1,10 +1,10 @@
 module Devcenter::Backend
   class Game
-    MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues, :category, :credits]
+    MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues, :category, :credits, :credits_url]
 
     attr_accessor :uuid, :name, :description, :category, :credits
     attr_writer :configuration, :screenshots, :developer_configuration
-    attr_reader :original_attributes, :token, :secret
+    attr_reader :original_attributes, :token, :secret, :credits_url
 
     def self.create(token, params)
       developers = params.delete :developers
@@ -76,7 +76,7 @@ module Devcenter::Backend
     end
 
     def to_hash(options = {})
-      hash = {uuid: uuid, name: name, description: description, secret: secret, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration, category: category, credits: credits}
+      hash = {uuid: uuid, name: name, description: description, secret: secret, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration, category: category, credits: credits, credits_url: credits_url}
 
       hash[:developers] = developers unless options[:no_graph]
       hash[:venues] = options[:no_graph] ? venues : venues_with_computed_config
@@ -85,7 +85,7 @@ module Devcenter::Backend
 
     def public_information
       ready_venues = venues_with_computed_config.select {|venue, config| config['enabled'] && config['computed']['ready']}.map {|venue, config| venue}
-      info = {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots, 'venues' => ready_venues, 'category' => category, 'credits' => credits}
+      info = {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots, 'venues' => ready_venues, 'category' => category, 'credits' => credits, 'credits_url' => credits_url}
 
       if venues_with_computed_config['embedded'] && venues_with_computed_config['embedded']['computed'] && venues_with_computed_config['embedded']['computed']['code']
         info['embed'] = venues_with_computed_config['embedded']['computed']['code']
@@ -128,6 +128,7 @@ module Devcenter::Backend
       raise Error::ValidationError.new("Game must have a description!") unless description.to_s !~ /^\s*$/
       raise Error::ValidationError.new("Game must have a category!") unless category.to_s !~ /^\s*$/
       raise Error::ValidationError.new("Game configuration invalid!") unless GameType.valid?(self)
+      raise Error::ValidationError.new("Game's credits URL must be a http or https URL") if credits_url && credits_url !~ /^http(s|):\/\//
 
       Venue.validate_game(self)
     end
@@ -176,6 +177,14 @@ module Devcenter::Backend
     def venues=(new_venues)
       new_venues.each do |venue, config|
         venues[venue] = config
+      end
+    end
+
+    def credits_url=(new_credits_url)
+      if new_credits_url =~ /^\s*$/
+        @credits_url = nil
+      else
+        @credits_url = new_credits_url
       end
     end
 

@@ -241,6 +241,51 @@ describe Devcenter::Backend::API do
       config['credits'].must_equal "Quarter Spiral Co."
     end
 
+    it "can set a game's credits URL" do
+      client.post "/v1/developers/#{@entity1}"
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], configuration:       {type: "html5", url: "http://example.com/game1"}, category: 'Jump n Run')
+      game = JSON.parse(response.body)['uuid']
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits_url'].must_be_nil
+
+      client.put "/v1/games/#{game}", {}, JSON.dump(credits_url: "http://quarterspiral.com")
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits_url'].must_equal "http://quarterspiral.com"
+
+      client.put "/v1/games/#{game}", {}, JSON.dump(credits_url: "")
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits_url'].must_be_nil
+
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game 2", description: "A good game", developers: [@entity1], configuration:       {type: "html5", url: "http://example.com/game1"}, category: 'Jump n Run', credits_url: "http://quarterspiral.com/2")
+      game = JSON.parse(response.body)['uuid']
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits_url'].must_equal "http://quarterspiral.com/2"
+    end
+
+    it "can only save http and https credit urls" do
+      client.post "/v1/developers/#{@entity1}"
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game 2", description: "A good game", developers: [@entity1], configuration:       {type: "html5", url: "http://example.com/game1"}, category: 'Jump n Run', credits_url: "http://quarterspiral.com/2")
+      game = JSON.parse(response.body)['uuid']
+
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits_url'].must_equal "http://quarterspiral.com/2"
+
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game 2", description: "A good game", developers: [@entity1], configuration:       {type: "html5", url: "http://example.com/game1"}, category: 'Jump n Run', credits_url: "https://quarterspiral.com/2")
+      game = JSON.parse(response.body)['uuid']
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits_url'].must_equal "https://quarterspiral.com/2"
+
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game 2", description: "A good game", developers: [@entity1], configuration:       {type: "html5", url: "http://example.com/game1"}, category: 'Jump n Run', credits_url: "ftp://quarterspiral.com")
+      response.wont_equal 201
+
+      response = client.post "/v1/games", {}, JSON.dump(name: "Test Game 2", description: "A good game", developers: [@entity1], configuration:       {type: "html5", url: "http://example.com/game1"}, category: 'Jump n Run', credits_url: "javascript:alert(1)")
+      response.wont_equal 201
+
+      response = client.put "/v1/games/#{game}", {}, JSON.dump(credits_url: "ftp://quarterspiral.com/2")
+      config = JSON.parse(client.get("/v1/games/#{game}").body)
+      config['credits_url'].must_equal "https://quarterspiral.com/2"
+    end
+
     it "can list games of a developer" do
       client.post "/v1/developers/#{@entity1}"
       client.post "/v1/developers/#{@entity2}"
