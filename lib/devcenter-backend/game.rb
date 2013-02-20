@@ -143,6 +143,7 @@ module Devcenter::Backend
 
     def save
       self.class.ensure_game_is_valid!(self)
+      self.class.connection.cache.set('last_game_save', Time.now.to_i)
       self.class.connection.datastore.set(uuid, token, {'game' => to_hash(no_graph: true)})
     end
 

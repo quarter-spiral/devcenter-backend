@@ -67,6 +67,10 @@ module Devcenter::Backend
         TokenStore.reset!
         yield
       end
+
+      def last_game_update
+        connection.cache.fetch('last_game_save') {-1}
+      end
     end
 
     before do
@@ -88,14 +92,16 @@ module Devcenter::Backend
 
     namespace '/public' do
       get '/games' do
-        uuids = params[:games]
-        uuids = JSON.parse(uuids) if uuids && uuids.kind_of?(String)
+        connection.cache.fetch(['public_games_list', last_game_update]) do
+          uuids = params[:games]
+          uuids = JSON.parse(uuids) if uuids && uuids.kind_of?(String)
 
-        games = try_twice_and_avoid_token_expiration do
-          Game.all(token, uuids: uuids)
+          games = try_twice_and_avoid_token_expiration do
+            Game.all(token, uuids: uuids)
+          end
+
+          {'games' => games.map {|game| game.public_information}}
         end
-
-        {'games' => games.map {|game| game.public_information}}
       end
     end
 

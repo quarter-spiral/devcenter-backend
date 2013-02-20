@@ -1,3 +1,7 @@
+# 0.0.41 WIP
+
+* Adds caching to public games list
+
 # 0.0.40
 
 * Adds credit urls for games

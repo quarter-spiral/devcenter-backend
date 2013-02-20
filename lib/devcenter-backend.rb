@@ -6,6 +6,8 @@ end
 require "datastore-client"
 require "graph-client"
 require "auth-client"
+require "cache-client"
+require "cache-backend-iron-cache"
 
 require "devcenter-backend/version"
 require "devcenter-backend/error"

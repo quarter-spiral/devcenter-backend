@@ -1,6 +1,6 @@
 module Devcenter::Backend
   class Connection
-    attr_reader :datastore, :graph, :auth
+    attr_reader :datastore, :graph, :auth, :cache
 
     def self.create
       self.new(
@@ -14,6 +14,7 @@ module Devcenter::Backend
       @datastore = ::Datastore::Client.new(datastore_backend_url)
       @graph = ::Graph::Client.new(graph_backend_url)
       @auth = ::Auth::Client.new(auth_backend_url)
+      @cache = ::Cache::Client.new(::Cache::Backend::IronCache, ENV['IRON_CACHE_PROJECT_ID'], ENV['IRON_CACHE_TOKEN'], ENV['IRON_CACHE_CACHE'])
     end
   end
 end
