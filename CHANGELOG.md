@@ -1,4 +1,4 @@
-# 0.0.41 WIP
+# 0.0.41
 
 * Adds caching to public games list
 
