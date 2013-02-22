@@ -1,4 +1,4 @@
-# 0.0.43 WIP
+# 0.0.43
 
 * Updates grape_newrelic
 
