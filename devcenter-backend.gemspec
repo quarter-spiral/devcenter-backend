@@ -15,8 +15,9 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Devcenter::Backend::VERSION
 
+  gem.add_dependency 'rack', '~> 1.4.5'
   gem.add_dependency 'grape', '0.2.3.qs'
-  gem.add_dependency 'json', '1.7.4'
+  gem.add_dependency 'json', '~> 1.7.7'
   gem.add_dependency 'datastore-client', '>=0.0.10'
   gem.add_dependency 'graph-client', '>=0.0.9'
   gem.add_dependency 'auth-client', '>=0.0.14'

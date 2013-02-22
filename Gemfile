@@ -15,10 +15,10 @@ end
 
 group :development, :test do
   #gem 'graph-backend', path: '../graph-backend'
-  gem 'graph-backend', '0.0.14'
+  gem 'graph-backend', '0.0.22'
 
   #gem 'datastore-backend', path: '../datastore-backend'
-  gem 'datastore-backend', '0.0.14'
+  gem 'datastore-backend', '0.0.15'
 
   gem 'rack-client'
   gem 'rack-test'
