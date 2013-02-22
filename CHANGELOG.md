@@ -1,3 +1,8 @@
+# 0.0.42
+
+* Updates rack
+* Updates json
+
 # 0.0.41
 
 * Adds caching to public games list
