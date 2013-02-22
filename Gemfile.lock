@@ -25,7 +25,7 @@ PATH
       cache-client (~> 0.0.4)
       datastore-client (>= 0.0.10)
       grape (= 0.2.3.qs)
-      grape_newrelic (~> 0.0.3)
+      grape_newrelic (~> 0.0.4)
       graph-client (>= 0.0.9)
       json (~> 1.7.7)
       ping-middleware (~> 0.0.2)
@@ -114,9 +114,9 @@ GEM
       rack-accept
       rack-mount
       virtus
-    grape_newrelic (0.0.3)
+    grape_newrelic (0.0.4)
       grape (>= 0.2.2)
-      newrelic_rpm (~> 3.5.4.33)
+      newrelic_rpm (>= 3.5.4.33)
     graph-backend (0.0.22)
       auth-client (>= 0.0.14)
       grape (= 0.2.3.qs)
@@ -156,7 +156,7 @@ GEM
       activemodel (~> 3.1)
       mongo (<= 1.6.2)
       tzinfo (~> 0.3.22)
-    multi_json (1.3.7)
+    multi_json (1.6.1)
     multi_xml (0.5.3)
     multipart-post (1.1.5)
     neography (1.0.6)
@@ -167,7 +167,7 @@ GEM
       rake (>= 0.8.7)
       rubyzip (>= 0.9.7)
     net-http-persistent (2.8)
-    newrelic_rpm (3.5.4.34)
+    newrelic_rpm (3.5.7.59)
     nokogiri (1.5.5)
     nokogiri (1.5.5-java)
     os (0.9.6)

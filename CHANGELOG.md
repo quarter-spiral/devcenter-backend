@@ -1,3 +1,7 @@
+# 0.0.43 WIP
+
+* Updates grape_newrelic
+
 # 0.0.42
 
 * Updates rack
