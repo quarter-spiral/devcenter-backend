@@ -1,3 +1,7 @@
+# 0.0.44 WIP
+
+* Adds dimension information to games
+
 # 0.0.43
 
 * Updates grape_newrelic

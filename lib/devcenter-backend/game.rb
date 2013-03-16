@@ -3,7 +3,7 @@ module Devcenter::Backend
     MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues, :category, :credits, :credits_url]
 
     attr_accessor :uuid, :name, :description, :category, :credits
-    attr_writer :configuration, :screenshots, :developer_configuration
+    attr_writer :screenshots, :developer_configuration
     attr_reader :original_attributes, :token, :secret, :credits_url
 
     def self.create(token, params)
@@ -152,8 +152,15 @@ module Devcenter::Backend
       self.class.connection.graph.list_related_entities(uuid, token, 'develops', direction: 'incoming')
     end
 
+    def configuration=(new_configuration)
+      new_configuration = santitize_sizes(new_configuration)
+      @configuration = new_configuration
+    end
+
     def configuration
-      @configuration || {}
+      configuration = @configuration || {}
+      defaults = {"sizes" => [{"width" => 600, "height" => 400}]}
+      defaults.merge(configuration)
     end
 
     def developer_configuration
@@ -190,6 +197,23 @@ module Devcenter::Backend
     end
 
     protected
+    def santitize_sizes(configuration)
+      configuration = configuration.clone
+
+      configuration.delete 'sizes' if sizes_blank?(configuration)
+      configuration['sizes'].select! {|size| size_valid?(size)} if configuration['sizes']
+
+      configuration
+    end
+
+    def sizes_blank?(configuration)
+      configuration.keys.include?('sizes') && (!configuration['sizes'] || !configuration['sizes'].kind_of?(Array) || configuration['sizes'].empty?)
+    end
+
+    def size_valid?(size)
+      size['width'] && size['height'] && size['width'].kind_of?(Numeric) && size['height'].kind_of?(Numeric) && size['width'] >= 0 && size['height'] >= 0
+    end
+
     def raw_update_from_hash(hash)
       hash.each do |key, value|
         value = value.to_hash if value.kind_of?(Hash)

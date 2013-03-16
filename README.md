@@ -251,7 +251,7 @@ JSON encoded hash of the game's configuration. Example:
   "name": "Nonsense's Tale",
   "description": "Rumble your way to the treasures of Cpt. McDoodle and his crew. Fight parrots, barrels and pirates!",
   "category": "Jump n Run",
-  "configuration": {"type": "html5", "url": "http://example.com/game"},
+  "configuration": {"type": "html5", "url": "http://example.com/game", "sizes": [{"width": 600, "height": 400}], "fluid-size": true},
   "developers": ["eb6d96b0-cb55-012f-4393-58b035f5cdfb", "ebc08260-cb55-012f-4394-58b035f5cdfb"],
   "screenshots": ["http://example.com/nonsense/1.jpg", "http://example.com/nonsense/2.jpg"],
   "developer_configuration": {"background": "red", "musicTheme": "caribbean"},
@@ -330,8 +330,6 @@ Currently available venues.
 
 ##### Options
 
-
-
 #### Spiral Galaxy
 
 **Key**: ``spiral-galaxy``
@@ -347,3 +345,27 @@ A white-label venue to embed your game on any website.
 
 Comes with a ``code`` value in the computed configuration that has the complete embed code you need to embed in your website.
 
+
+### General Configuration
+
+The ``configuration`` object also contains the following properties:
+
+### ``sizes`` [OPTIONAL]
+
+An array that indicates the allowed sizes for the game. Each object in the array must have a ``width`` and ``height`` property. For games using the fluid canvas only the first element of the array is used as a minimal width and height.
+
+#### Examples
+
+```javascript
+"configuration": {…, "sizes": [{"width": 600, "height": 400}, {"width": 320, "height": 200}]}
+```
+
+### ``fluid-size`` [OPTIONAL]
+
+Boolean property that indicates if a fluid canvas is used. If this property is ``falsy`` a canvas with a fixed size will be used.
+
+#### Examples
+
+```javascript
+"configuration": {…, "fluid-size": true}
+```
