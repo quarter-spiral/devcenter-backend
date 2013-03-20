@@ -1,4 +1,4 @@
-# 0.0.44 WIP
+# 0.0.44
 
 * Adds dimension information to games
 
