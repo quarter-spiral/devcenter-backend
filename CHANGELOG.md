@@ -1,3 +1,7 @@
+# 0.0.45 WIP
+
+* Updates dependencies
+
 # 0.0.44
 
 * Adds dimension information to games

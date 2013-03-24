@@ -1,5 +1,6 @@
 require 'rack/client'
 require 'auth-backend/test_helpers'
+require 'faraday'
 
 include Devcenter::Backend
 
@@ -43,19 +44,41 @@ module Auth
   end
 end
 
+class ContentTypeInjector
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    env['CONTENT_TYPE'] = 'application/json'
+    env['CONTENT_LENGTH'] = env['rack.input'].length
+    @app.call(env)
+  end
+end
+
 def client
   return @client if @client
 
   @client =  Rack::Client.new {
     use AuthenticationInjector
+    use ContentTypeInjector
     run API_APP
   }
 
   def @client.get(url, headers = {}, body = '', &block)
-    request('GET', url, headers, body, {}, &block)
+    params = body && !body.empty? ? JSON.parse(body) : {}
+    uri = URI.parse(url)
+    uri.query ||= ''
+    uri.query += "&" + Faraday::Utils.build_nested_query(params)
+    request('GET', uri.to_s, headers, nil, {}, &block)
   end
+
   def @client.delete(url, headers = {}, body = '', &block)
-    request('DELETE', url, headers, body, {}, &block)
+    params = body && !body.empty? ? JSON.parse(body) : {}
+    uri = URI.parse(url)
+    uri.query ||= ''
+    uri.query += "&" + Faraday::Utils.build_nested_query(params)
+    request('DELETE', uri.to_s, headers, nil, {}, &block)
   end
 
   @client

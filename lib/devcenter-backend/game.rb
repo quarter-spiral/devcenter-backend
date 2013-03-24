@@ -1,3 +1,5 @@
+require 'uuid'
+
 module Devcenter::Backend
   class Game
     MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues, :category, :credits, :credits_url]
@@ -16,8 +18,9 @@ module Devcenter::Backend
       ensure_enough_developers!(developers)
       ensure_game_is_valid!(game)
 
-      game.uuid = connection.datastore.create(token, {'game' => game.to_hash(no_graph: true)})
-      game.save
+      game.uuid = UUID.new.generate
+      connection.datastore.set(game.uuid, token, {'game' => game.to_hash(no_graph: true)})
+
       unless game.adjust_developers(developers)
         game.destroy
         raise Error::BaseError.new("Can't create game with this developer list!")

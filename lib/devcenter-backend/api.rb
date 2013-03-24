@@ -9,6 +9,7 @@ module Devcenter::Backend
 
     format :json
     default_format :json
+    default_error_formatter :json
 
     class TokenStore
       def self.token(connection)
@@ -41,8 +42,6 @@ module Devcenter::Backend
       [404, {'Content-Type' => 'application/json'}, [JSON.dump(error: e.message)]]
     end
 
-    error_format :json
-
     helpers do
       def connection
         @connection ||= Connection.create
@@ -71,12 +70,16 @@ module Devcenter::Backend
       def last_game_update
         connection.cache.fetch('last_game_save') {-1}
       end
+
+      def empty_body
+        {}
+      end
     end
 
     before do
       header('Access-Control-Allow-Origin', request.env['HTTP_ORIGIN'] || '*')
 
-      unless request.request_method == 'OPTIONS' || request.path_info =~ /^\/public\//
+      unless request.request_method == 'OPTIONS' || request.path_info =~ /^\/v1\/public\//
         error!('Unauthenticated', 403) unless request.env['HTTP_AUTHORIZATION']
         @token = request.env['HTTP_AUTHORIZATION'].gsub(/^Bearer\s+/, '')
         error!('Unauthenticated', 403) unless connection.auth.token_valid?(@token)
@@ -87,7 +90,7 @@ module Devcenter::Backend
       header('Access-Control-Allow-Headers', 'origin, x-requested-with, content-type, accept, authorization')
       header('Access-Control-Allow-Methods', 'GET, PUT,OPTIONS, POST, DELETE')
       header('Access-Control-Max-Age', '1728000')
-      ""
+      empty_body
     end
 
     namespace '/public' do
@@ -108,12 +111,12 @@ module Devcenter::Backend
     namespace '/developers' do
       post '/:uuid' do
         connection.graph.add_role(params[:uuid], @token, 'developer')
-        ''
+        empty_body
       end
 
       delete '/:uuid' do
         connection.graph.remove_role(params[:uuid], @token, 'developer')
-        ''
+        empty_body
       end
 
       get '/:uuid/games' do
