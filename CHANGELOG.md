@@ -1,3 +1,7 @@
+# 0.0.46 WIP
+
+* Adds ``uuid`` gem as a dependency
+
 # 0.0.45
 
 * Updates dependencies

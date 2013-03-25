@@ -30,6 +30,7 @@ PATH
       json (~> 1.7.7)
       ping-middleware (~> 0.0.2)
       rack (~> 1.4.5)
+      uuid
 
 GEM
   remote: https://rubygems.org/
