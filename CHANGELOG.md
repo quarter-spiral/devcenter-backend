@@ -1,6 +1,6 @@
-# 0.0.46 WIP
+# 0.0.46
 
-* Adds ``uuid`` gem as a dependency
+* Adds ``uuid`` gem as a dependency to run on Heroku
 
 # 0.0.45
 
