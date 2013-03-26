@@ -1,4 +1,4 @@
-# 0.0.47 WIP
+# 0.0.47
 
 * Reflects games size setting in their embed code
 
