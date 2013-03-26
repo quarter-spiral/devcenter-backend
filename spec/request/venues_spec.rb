@@ -110,7 +110,9 @@ describe "Game Venues" do
       config['venues']['embedded']['enabled'].must_equal(true)
       config['venues']['embedded']['computed']['code'].wont_be_nil
       size = config['configuration']['sizes'].first
-      config['venues']['embedded']['computed']['code'].must_equal %Q{<iframe width="#{size['width']}" height="#{size['height']}" src="#{ENV['QS_CANVAS_APP_URL']}/v1/games/#{@game}/embedded" style="padding:0px; margin:0px; background-color:#000; border-width:0px;" frameborder="0" align="top"></iframe>}
+      width = size['width']
+      height = size['height'].to_i +  Devcenter::Backend::Venue::Embedded::HEIGHT_MARGIN
+      config['venues']['embedded']['computed']['code'].must_equal %Q{<iframe width="#{width}" height="#{height}" src="#{ENV['QS_CANVAS_APP_URL']}/v1/games/#{@game}/embedded" style="padding:0px; margin:0px; background-color:#000; border-width:0px;" frameborder="0" align="top"></iframe>}
 
       client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'embedded' => {enabled: false}})
       response = client.get "/v1/games/#{@game}"

@@ -1,3 +1,7 @@
+# 0.0.48 WIP
+
+* Respects height margin in embed code's sizing
+
 # 0.0.47
 
 * Reflects games size setting in their embed code
