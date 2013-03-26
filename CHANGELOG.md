@@ -1,3 +1,7 @@
+# 0.0.47 WIP
+
+* Reflects games size setting in their embed code
+
 # 0.0.46
 
 * Adds ``uuid`` gem as a dependency to run on Heroku

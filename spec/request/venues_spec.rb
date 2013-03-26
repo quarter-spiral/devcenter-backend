@@ -109,7 +109,8 @@ describe "Game Venues" do
       config = JSON.parse(response.body)
       config['venues']['embedded']['enabled'].must_equal(true)
       config['venues']['embedded']['computed']['code'].wont_be_nil
-      config['venues']['embedded']['computed']['code'].must_equal %Q{<iframe width="600" height="600" src="#{ENV['QS_CANVAS_APP_URL']}/v1/games/#{@game}/embedded" style="padding:0px; margin:0px; background-color:#000; border-width:0px;" frameborder="0" align="top"></iframe>}
+      size = config['configuration']['sizes'].first
+      config['venues']['embedded']['computed']['code'].must_equal %Q{<iframe width="#{size['width']}" height="#{size['height']}" src="#{ENV['QS_CANVAS_APP_URL']}/v1/games/#{@game}/embedded" style="padding:0px; margin:0px; background-color:#000; border-width:0px;" frameborder="0" align="top"></iframe>}
 
       client.put "/v1/games/#{@game}", {}, JSON.dump(venues: {'embedded' => {enabled: false}})
       response = client.get "/v1/games/#{@game}"
