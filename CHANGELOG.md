@@ -1,4 +1,4 @@
-# 0.0.48 WIP
+# 0.0.48
 
 * Respects height margin in embed code's sizing
 
