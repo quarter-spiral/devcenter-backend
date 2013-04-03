@@ -22,7 +22,7 @@ describe Devcenter::Backend::API do
 
   describe "authenticated" do
     before do
-      AuthenticationInjector.token = token
+      AuthenticationInjector.token = APP_TOKEN
     end
 
     after do
@@ -30,12 +30,12 @@ describe Devcenter::Backend::API do
     end
 
     it "is not possible to add a game as a non-developer" do
-      old_games = @connection.graph.uuids_by_role(token, 'game')
+      old_games = @connection.graph.uuids_by_role(APP_TOKEN, 'game')
 
       response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1])
       response.status.wont_equal 201
 
-      @connection.graph.uuids_by_role(token, 'game').size.must_equal old_games.size
+      @connection.graph.uuids_by_role(APP_TOKEN, 'game').size.must_equal old_games.size
 
       client.post "/v1/developers/#{@entity1}"
 
@@ -45,13 +45,13 @@ describe Devcenter::Backend::API do
       uuid = JSON.parse(response.body)['uuid']
       uuid.empty?.must_equal false
 
-      new_games = @connection.graph.uuids_by_role(token, 'game')
+      new_games = @connection.graph.uuids_by_role(APP_TOKEN, 'game')
       new_games.size.must_equal old_games.size + 1
       new_games.must_include uuid
     end
 
     it "can demote developers" do
-      old_games = @connection.graph.uuids_by_role(token, 'game')
+      old_games = @connection.graph.uuids_by_role(APP_TOKEN, 'game')
 
       client.post   "/v1/developers/#{@entity1}"
       client.delete "/v1/developers/#{@entity1}"
@@ -59,7 +59,7 @@ describe Devcenter::Backend::API do
       response = client.post "/v1/games", {}, JSON.dump(name: "Test Game", description: "A good game", developers: [@entity1], category: 'Jump n Run')
       response.status.wont_equal 201
 
-      @connection.graph.uuids_by_role(token, 'game').size.must_equal old_games.size
+      @connection.graph.uuids_by_role(APP_TOKEN, 'game').size.must_equal old_games.size
     end
 
     it "ensures that games can only be created with a name, a description, at least one developer, a configuration with a type and a category" do
@@ -352,7 +352,7 @@ describe Devcenter::Backend::API do
       games_of_entity1.must_include uuid1
 
 
-      games = @connection.graph.uuids_by_role(token, 'game')
+      games = @connection.graph.uuids_by_role(APP_TOKEN, 'game')
       games.must_include(uuid1)
 
       client.delete "/v1/games/#{uuid1}"
@@ -365,7 +365,7 @@ describe Devcenter::Backend::API do
       games_of_entity1 =JSON.parse(response.body)
       games_of_entity1.wont_include uuid1
 
-      games = @connection.graph.uuids_by_role(token, 'game')
+      games = @connection.graph.uuids_by_role(APP_TOKEN, 'game')
       games.wont_include(uuid1)
     end
 
@@ -479,7 +479,7 @@ describe Devcenter::Backend::API do
     end
 
     it "does not try to modify non-game resources" do
-      @connection.datastore.set(@entity2, token, name: 'Not a game')
+      @connection.datastore.set(@entity2, APP_TOKEN, name: 'Not a game')
       response = client.put "/v1/games/#{@entity2}", {}, JSON.dump(name: 'Update')
       data = JSON.parse(response.body)
       data['error'].must_equal "Entity not a game (#{@entity2})"

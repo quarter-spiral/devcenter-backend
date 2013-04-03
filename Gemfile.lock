@@ -36,30 +36,30 @@ GEM
   remote: https://rubygems.org/
   remote: https://user:We267RFF7BfwVt4LdqFA@privategems.herokuapp.com/
   specs:
-    actionpack (3.2.9)
-      activemodel (= 3.2.9)
-      activesupport (= 3.2.9)
+    actionpack (3.2.13)
+      activemodel (= 3.2.13)
+      activesupport (= 3.2.13)
       builder (~> 3.0.0)
       erubis (~> 2.7.0)
       journey (~> 1.0.4)
-      rack (~> 1.4.0)
+      rack (~> 1.4.5)
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    activemodel (3.2.9)
-      activesupport (= 3.2.9)
+    activemodel (3.2.13)
+      activesupport (= 3.2.13)
       builder (~> 3.0.0)
-    activerecord (3.2.9)
-      activemodel (= 3.2.9)
-      activesupport (= 3.2.9)
+    activerecord (3.2.13)
+      activemodel (= 3.2.13)
+      activesupport (= 3.2.13)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activesupport (3.2.9)
-      i18n (~> 0.6)
+    activesupport (3.2.13)
+      i18n (= 0.6.1)
       multi_json (~> 1.0)
     arel (3.0.2)
-    auth-backend (0.0.29)
-      activerecord (>= 3.2.9)
+    auth-backend (0.0.30)
+      activerecord (>= 3.2.13)
       bcrypt-ruby
       graph-client (~> 0.0.12)
       json (~> 1.7.7)
@@ -91,7 +91,7 @@ GEM
     commander (4.1.3)
       highline (~> 1.6.11)
     daemons (1.1.9)
-    datastore-backend (0.0.18)
+    datastore-backend (0.0.19)
       auth-client (>= 0.0.14)
       grape (~> 0.4.0)
       grape_newrelic (~> 0.0.3)
@@ -114,6 +114,7 @@ GEM
     faraday (0.8.1)
       multipart-post (~> 1.1)
     ffi (1.3.1)
+    ffi (1.3.1-java)
     grape (0.4.0)
       activesupport
       builder
@@ -127,7 +128,7 @@ GEM
     grape_newrelic (0.0.4)
       grape (>= 0.2.2)
       newrelic_rpm (>= 3.5.4.33)
-    graph-backend (0.0.25)
+    graph-backend (0.0.26)
       auth-client (>= 0.0.14)
       grape (~> 0.4.0)
       grape_newrelic (~> 0.0.4)
@@ -145,7 +146,7 @@ GEM
       url_mount (~> 0.2.1)
     httpauth (0.2.0)
     httpclient (2.3.3)
-    i18n (0.6.4)
+    i18n (0.6.1)
     iron_cache (1.4.0)
       iron_core (>= 0.5.1)
     iron_core (0.5.2)
@@ -166,8 +167,8 @@ GEM
       moped (~> 1.4.2)
       origin (~> 1.0)
       tzinfo (~> 0.3.22)
-    moped (1.4.4)
-    multi_json (1.7.1)
+    moped (1.4.5)
+    multi_json (1.7.2)
     multi_xml (0.5.3)
     multipart-post (1.2.0)
     neography (1.0.9)
@@ -257,7 +258,7 @@ GEM
     tilt (1.3.3)
     typhoeus (0.6.2)
       ethon (~> 0.5.10)
-    tzinfo (0.3.35)
+    tzinfo (0.3.37)
     url_mount (0.2.1)
       rack
     uuid (2.3.6)
@@ -273,11 +274,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  auth-backend (~> 0.0.29)
+  auth-backend (~> 0.0.30)
   bson_ext
-  datastore-backend (= 0.0.18)
+  datastore-backend (= 0.0.19)
   devcenter-backend!
-  graph-backend (= 0.0.25)
+  graph-backend (= 0.0.26)
   nokogiri
   rack-client
   rack-test

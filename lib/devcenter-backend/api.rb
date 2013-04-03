@@ -74,15 +74,50 @@ module Devcenter::Backend
       def empty_body
         {}
       end
+
+      def own_data?(uuid)
+        @token_owner['uuid'] == uuid
+      end
+
+      def system_level_privileges?
+        @token_owner['type'] == 'app'
+      end
+
+      def is_authorized_to_access?(uuid)
+        system_level_privileges? || own_data?(uuid)
+      end
+
+      def prevent_access!
+        error!('Unauthenticated', 403)
+      end
+
+      def owner_only!(uuid = params[:uuid])
+        prevent_access! unless is_authorized_to_access?(uuid)
+      end
+
+      def system_privileges_only!
+        prevent_access! unless system_level_privileges?
+      end
+
+      def developers_only!(game)
+        prevent_access! unless system_level_privileges? || game.developers.include?(@token_owner['uuid'])
+      end
+
+      def retrieve_game(uuid)
+        try_twice_and_avoid_token_expiration do
+          Game.find(uuid, token)
+        end
+      end
     end
 
     before do
       header('Access-Control-Allow-Origin', request.env['HTTP_ORIGIN'] || '*')
 
       unless request.request_method == 'OPTIONS' || request.path_info =~ /^\/v1\/public\//
-        error!('Unauthenticated', 403) unless request.env['HTTP_AUTHORIZATION']
-        @token = request.env['HTTP_AUTHORIZATION'].gsub(/^Bearer\s+/, '')
-        error!('Unauthenticated', 403) unless connection.auth.token_valid?(@token)
+        prevent_access! unless request.env['HTTP_AUTHORIZATION']
+        token = request.env['HTTP_AUTHORIZATION'].gsub(/^Bearer\s+/, '')
+        @token_owner = connection.auth.token_owner(token)
+        prevent_access! unless @token_owner
       end
     end
 
@@ -110,37 +145,57 @@ module Devcenter::Backend
 
     namespace '/developers' do
       post '/:uuid' do
-        connection.graph.add_role(params[:uuid], @token, 'developer')
+        owner_only!
+
+        try_twice_and_avoid_token_expiration do
+          connection.graph.add_role(params[:uuid], token, 'developer')
+        end
         empty_body
       end
 
       delete '/:uuid' do
-        connection.graph.remove_role(params[:uuid], @token, 'developer')
+        owner_only!
+
+        try_twice_and_avoid_token_expiration do
+          connection.graph.remove_role(params[:uuid], token, 'developer')
+        end
         empty_body
       end
 
       get '/:uuid/games' do
-        game_uuids = connection.graph.list_related_entities(params[:uuid], @token, 'develops')
-        Hash[Game.find_batch(game_uuids, @token).map {|uuid, game| [uuid, game.to_hash]}]
+        owner_only!
+
+        try_twice_and_avoid_token_expiration do
+          game_uuids = connection.graph.list_related_entities(params[:uuid], token, 'develops')
+          Hash[Game.find_batch(game_uuids, token).map {|uuid, game| [uuid, game.to_hash]}]
+        end
       end
     end
 
     namespace '/games' do
       post '/' do
-        Game.create(@token, sheer_params).to_hash
+        prevent_access! unless system_level_privileges? || sheer_params[:developers] == [@token_owner['uuid']]
+
+        try_twice_and_avoid_token_expiration do
+          Game.create(token, sheer_params).to_hash
+        end
       end
 
       post '/:uuid/developers/:developer_uuid' do
+        system_privileges_only!
+
         uuid = params[:uuid]
-        game = Game.find(uuid, @token)
+        game = retrieve_game(uuid)
         game.add_developer(params[:developer_uuid])
 
         game.to_hash
       end
 
       delete '/:uuid/developers/:developer_uuid' do
+        system_privileges_only!
+
         uuid = params[:uuid]
-        game = Game.find(uuid, @token)
+        game = retrieve_game(uuid)
         game.remove_developer(params[:developer_uuid])
 
         game.to_hash
@@ -148,15 +203,23 @@ module Devcenter::Backend
 
       get '/:uuid' do
         uuid = params[:uuid]
-        game = Game.find(uuid, @token)
+        game = retrieve_game(uuid)
+
+        developers_only!(game)
+
         game.to_hash
       end
 
       put '/:uuid' do
         uuid = params[:uuid]
-        game = Game.find(uuid, @token)
+        game = retrieve_game(uuid)
+
+        developers_only!(game)
 
         developers = params.delete(:developers)
+        unless system_level_privileges?
+          prevent_access! if developers && (game.developers != [@token_owner['uuid']] || developers != [@token_owner['uuid']])
+        end
 
         game.update_from_hash(sheer_params(:uuid))
 
@@ -169,8 +232,10 @@ module Devcenter::Backend
       end
 
       delete '/:uuid' do
-        game = Game.new(@token)
-        game.uuid = params[:uuid]
+        game = retrieve_game(params[:uuid])
+
+        developers_only!(game)
+
         game.destroy
       end
     end

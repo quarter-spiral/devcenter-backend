@@ -1,3 +1,7 @@
+# 0.0.49 / Unreleased
+
+* Adds authorization
+
 # 0.0.48
 
 * Respects height margin in embed code's sizing

@@ -88,7 +88,11 @@ AUTH_HELPERS = Auth::Backend::TestHelpers.new(AUTH_APP)
 
 QS_SPEC_TOKEN ||= AUTH_HELPERS.get_token
 def token
-  QS_SPEC_TOKEN
+  @token ||= AUTH_HELPERS.get_token
+end
+
+def user
+  @user ||= AUTH_HELPERS.user_data
 end
 
 oauth_app = AUTH_HELPERS.create_app!
