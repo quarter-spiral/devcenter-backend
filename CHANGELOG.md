@@ -1,4 +1,4 @@
-# 0.0.49 / Unreleased
+# 0.0.49 / 2013-04-02
 
 * Adds authorization
 
