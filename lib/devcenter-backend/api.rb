@@ -218,7 +218,7 @@ module Devcenter::Backend
 
         developers = params.delete(:developers)
         unless system_level_privileges?
-          prevent_access! if developers && (game.developers != [@token_owner['uuid']] || developers != [@token_owner['uuid']])
+          prevent_access! if developers && game.developers != developers && (game.developers != [@token_owner['uuid']] || developers != [@token_owner['uuid']])
         end
 
         game.update_from_hash(sheer_params(:uuid))

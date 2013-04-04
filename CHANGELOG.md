@@ -1,3 +1,7 @@
+# 0.0.50 / Unreleased
+
+* Fixes bug when saving games with an unchanged developers list
+
 # 0.0.49 / 2013-04-02
 
 * Adds authorization
