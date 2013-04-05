@@ -118,4 +118,30 @@ describe Devcenter::Backend::API do
       must_have_subscription(@game)
     end
   end
+
+  it "cannot change the end of a subscription" do
+    subscribe!(fake_payment_token, @game)
+    unsubscribe!(@game).status.must_equal 200
+
+    old_end_of_subscription = get_game(@game)['subscription_phasing_out']
+    old_end_of_subscription.wont_be_nil
+
+    with_system_level_privileges do
+      client.put "/v1/games/#{@game}", {}, JSON.dump(end_of_subscription: nil)
+    end
+    get_game(@game)['subscription_phasing_out'].must_equal old_end_of_subscription
+
+    with_system_level_privileges do
+      client.put "/v1/games/#{@game}", {}, JSON.dump(end_of_subscription: old_end_of_subscription + 1)
+    end
+    get_game(@game)['subscription_phasing_out'].must_equal old_end_of_subscription
+  end
+
+  it "cannot change the subscription type" do
+    (!!get_game(@game)['subscription']).must_equal false
+    with_system_level_privileges do
+      client.put "/v1/games/#{@game}", {}, JSON.dump(subscription_type: 'live')
+    end
+    (!!get_game(@game)['subscription']).must_equal false
+  end
 end
