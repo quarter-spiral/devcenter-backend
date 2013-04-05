@@ -1,4 +1,4 @@
-# 0.0.50 / Unreleased
+# 0.0.50
 
 * Adds paid game subscriptions and API endpoints
 * Fixes bug when saving games with an unchanged developers list
