@@ -32,6 +32,8 @@ group :development, :test do
   gem 'songkick-oauth2-provider', git: 'https://github.com/quarter-spiral/oauth2-provider.git'
   gem 'nokogiri'
 
+  gem 'timecop'
+
   platforms :rbx do
     gem 'bson_ext'
   end

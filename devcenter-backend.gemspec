@@ -26,4 +26,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'cache-client', '~> 0.0.4'
   gem.add_dependency 'cache-backend-iron-cache', '~> 0.0.4'
   gem.add_dependency 'uuid'
+  gem.add_dependency 'stripe', '~> 1.7.11'
 end

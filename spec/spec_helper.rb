@@ -1,4 +1,5 @@
 ENV['RACK_ENV'] ||= 'test'
+ENV['QS_STRIPE_SECRET_KEY'] ||= 'sk_test_gQ3snq05Bqmj4hFSr3LI74EA'
 
 Bundler.require
 

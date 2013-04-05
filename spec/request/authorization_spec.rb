@@ -3,100 +3,6 @@ require_relative '../request_spec_helper.rb'
 
 require 'uuid'
 
-def gather_response(method, url, options)
-  client.send(method, url, {}, options)
-end
-
-def must_be_allowed(method, url, options = {})
-  response = gather_response(method, url, options)
-  [200, 201].must_include response.status
-end
-
-def must_be_forbidden(method, url, options = {})
-  response = gather_response(method, url, options)
-  response.status.must_equal 403
-end
-
-def with_system_level_privileges
-  old_token = AuthenticationInjector.token
-  AuthenticationInjector.token = APP_TOKEN
-  result = yield
-  AuthenticationInjector.token = old_token
-  result
-end
-
-def wont_be_a_developer(uuid)
-  @connection.graph.uuids_by_role(APP_TOKEN, 'developer').wont_include(uuid)
-end
-
-def must_be_a_developer(uuid)
-  @connection.graph.uuids_by_role(APP_TOKEN, 'developer').must_include(uuid)
-end
-
-def make_developer!(uuid)
-  with_system_level_privileges do
-    client.post("/v1/developers/#{uuid}")
-  end
-  must_be_a_developer(uuid)
-end
-
-def delete_all_games!
-  @connection.graph.uuids_by_role(APP_TOKEN, 'game').each do |game|
-    with_system_level_privileges do
-      client.delete "/v1/games/#{game}"
-    end
-  end
-  @connection.graph.uuids_by_role(APP_TOKEN, 'game').must_equal([])
-end
-
-def create_game!(options)
-  make_developer!(@yourself)
-  response = with_system_level_privileges do
-    client.post "/v1/games", {}, JSON.dump(options)
-  end
-  JSON.parse(response.body)['uuid']
-end
-
-def games_of_a_developer(uuid)
-  with_system_level_privileges do
-    JSON.parse(client.get("/v1/developers/#{uuid}/games").body).keys
-  end
-end
-
-def must_be_developer_of_game(uuid, game)
-  games_of_a_developer(uuid).must_include(game)
-end
-
-def wont_be_developer_of_game(uuid, game)
-  games_of_a_developer(uuid).wont_include(game)
-end
-
-def get_game(game)
-  response = with_system_level_privileges do
-     client.get("/v1/games/#{game}")
-  end
-  response.status.must_equal 200
-  JSON.parse(response.body)
-end
-
-def game_must_exist(game)
-  get_game(game)['uuid'].must_equal(game)
-end
-
-def game_wont_exist(game)
-  response = with_system_level_privileges do
-     client.get("/v1/games/#{game}")
-  end
-  response.status.must_equal 404
-end
-
-def make_developer_of_game!(uuid, game)
-  make_developer!(uuid)
-  with_system_level_privileges do
-    client.post "/v1/games/#{game}/developers/#{uuid}"
-  end
-end
-
 describe Devcenter::Backend::API do
   before do
     AUTH_HELPERS.delete_existing_users!
@@ -180,6 +86,23 @@ describe Devcenter::Backend::API do
     it "cannot retrieve private game information" do
       game = create_game!(@game_options)
       must_be_forbidden(:get, "/v1/games/#{game}")
+    end
+
+    it "cannot subscribe to games" do
+      game = create_game!(@game_options)
+      must_be_forbidden(:post, "/v1/games/#{game}/subscription", JSON.dump(token: fake_payment_token))
+      wont_have_subscription(game)
+    end
+
+    it "cannot cancel subscriptions" do
+      game = create_game!(@game_options)
+      AuthenticationInjector.token = token
+      subscribe!(fake_payment_token, game)
+      AuthenticationInjector.reset!
+      must_have_subscription(game)
+
+      must_be_forbidden(:delete, "/v1/games/#{game}/subscription", JSON.dump(token: fake_payment_token))
+      must_have_subscription(game)
     end
   end
 
@@ -337,6 +260,41 @@ describe Devcenter::Backend::API do
       game = create_game!(@game_options.merge(developers: [@someone_else]))
       must_be_forbidden(:get, "/v1/games/#{game}")
     end
+
+    it "can add a subscription to games you are developing" do
+      game = create_game!(@game_options)
+      must_be_allowed(:post, "/v1/games/#{game}/subscription", JSON.dump(token: fake_payment_token))
+      must_have_subscription(game)
+    end
+
+    it "cannot add a subscription to games anyone else is developing" do
+      make_developer!(@someone_else)
+      game = create_game!(@game_options.merge(developers: [@someone_else]))
+      must_be_forbidden(:post, "/v1/games/#{game}/subscription", JSON.dump(token: fake_payment_token))
+      wont_have_subscription(game)
+    end
+
+    it "can cancel subscriptions of games you are developing" do
+      game = create_game!(@game_options)
+      subscribe!(fake_payment_token, game)
+      must_have_subscription(game)
+
+      must_be_allowed(:delete, "/v1/games/#{game}/subscription")
+    end
+
+    it "cannot cancel subscriptions of games anyone else is developing" do
+      game = create_game!(@game_options)
+      subscribe!(fake_payment_token, game)
+      must_have_subscription(game)
+
+      make_developer!(@someone_else)
+      with_system_level_privileges do
+        client.put "/v1/games/#{game}", {}, JSON.dump(developers: [@someone_else])
+      end
+
+      must_be_forbidden(:delete, "/v1/games/#{game}/subscription")
+      must_have_subscription(game)
+    end
   end
 
   describe "authenticated as an app with system level privileges" do
@@ -429,10 +387,43 @@ describe Devcenter::Backend::API do
       get_game(game)['name'].must_equal 'Updated game'
     end
 
-    it "cann retrieve private game information of any game" do
+    it "can retrieve private game information of any game" do
       make_developer!(@someone_else)
       game = create_game!(@game_options.merge(developers: [@someone_else]))
       must_be_allowed(:get, "/v1/games/#{game}")
+    end
+
+    it "cannot add a subscription to any game" do
+      game = create_game!(@game_options)
+      must_be_forbidden(:post, "/v1/games/#{game}/subscription", JSON.dump(token: fake_payment_token))
+      wont_have_subscription(game)
+
+      make_developer!(@someone_else)
+      game = create_game!(@game_options.merge(developers: [@someone_else]))
+      must_be_forbidden(:post, "/v1/games/#{game}/subscription", JSON.dump(token: fake_payment_token))
+      wont_have_subscription(game)
+    end
+
+    it "can cancel subscriptions of any games" do
+      game = create_game!(@game_options)
+      AuthenticationInjector.token = token
+      subscribe!(fake_payment_token, game)
+      AuthenticationInjector.token = APP_TOKEN
+      must_have_subscription(game)
+
+      must_be_allowed(:delete, "/v1/games/#{game}/subscription")
+
+      game = create_game!(@game_options)
+      AuthenticationInjector.token = token
+      subscribe!(fake_payment_token, game)
+      AuthenticationInjector.token = APP_TOKEN
+      must_have_subscription(game)
+
+      make_developer!(@someone_else)
+      with_system_level_privileges do
+        client.put "/v1/games/#{game}", {}, JSON.dump(developers: [@someone_else])
+      end
+      must_be_allowed(:delete, "/v1/games/#{game}/subscription")
     end
   end
 end

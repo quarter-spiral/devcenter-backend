@@ -4,7 +4,7 @@ module Devcenter::Backend
   class Game
     MASS_ASSIGNABLE_ATTRIBUTES = [:name, :description, :screenshots, :configuration, :developer_configuration, :venues, :category, :credits, :credits_url]
 
-    attr_accessor :uuid, :name, :description, :category, :credits
+    attr_accessor :uuid, :name, :description, :category, :credits, :end_of_subscription, :subscription_type, :subscription_customer_id
     attr_writer :screenshots, :developer_configuration
     attr_reader :original_attributes, :token, :secret, :credits_url
 
@@ -34,7 +34,8 @@ module Devcenter::Backend
       @token = token
       params = params.clone
       @new_game = params.delete(:new_game)
-      params.delete(:developers)
+      params.reject! {|k,v| [:developers, :subscription, :subscription_phasing_out].include?(k.to_sym)}
+
       raw_update_from_hash(params)
 
       #TODO: Remove rolling migration
@@ -47,6 +48,7 @@ module Devcenter::Backend
 
     def self.find(uuid, token)
       data = connection.datastore.get(uuid, token)
+
       raise Error::NotFoundError.new("Game #{uuid} not found!") if !data || data.empty?
       raise Error::BaseError.new("Entity not a game (#{uuid})") unless data['game']
 
@@ -79,16 +81,27 @@ module Devcenter::Backend
     end
 
     def to_hash(options = {})
-      hash = {uuid: uuid, name: name, description: description, secret: secret, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration, category: category, credits: credits, credits_url: credits_url}
+      hash = {uuid: uuid, name: name, description: description, secret: secret, configuration: configuration, screenshots: screenshots, developer_configuration: developer_configuration, category: category, credits: credits, credits_url: credits_url, subscription: has_subscription?, subscription_phasing_out: has_subscription? && end_of_subscription}
 
       hash[:developers] = developers unless options[:no_graph]
-      hash[:venues] = options[:no_graph] ? venues : venues_with_computed_config
+      if options[:no_graph]
+        hash.merge!(
+            venues: venues,
+            end_of_subscription: end_of_subscription,
+            subscription_type: subscription_type,
+            subscription_customer_id: subscription_customer_id
+        )
+      else
+
+        hash[:venues] = venues_with_computed_config
+      end
+
       hash
     end
 
     def public_information
       ready_venues = venues_with_computed_config.select {|venue, config| config['enabled'] && config['computed']['ready']}.map {|venue, config| venue}
-      info = {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots, 'venues' => ready_venues, 'category' => category, 'credits' => credits, 'credits_url' => credits_url}
+      info = {'uuid' => uuid, 'name' => name, 'description' => description, 'screenshots' => screenshots, 'venues' => ready_venues, 'category' => category, 'credits' => credits, 'credits_url' => credits_url, 'subscription' => has_subscription?}
 
       if venues_with_computed_config['embedded'] && venues_with_computed_config['embedded']['computed'] && venues_with_computed_config['embedded']['computed']['code']
         info['embed'] = venues_with_computed_config['embedded']['computed']['code']
@@ -199,7 +212,19 @@ module Devcenter::Backend
       end
     end
 
+    def has_subscription?
+      !!(subscription_type && (!end_of_subscription || end_of_subscription.to_i > Time.now.to_i) && !(production? && test_subscription?))
+    end
+
     protected
+    def production?
+      !['development', 'test'].include?(ENV['RACK_ENV'])
+    end
+
+    def test_subscription?
+      subscription_type != 'live'
+    end
+
     def santitize_sizes(configuration)
       configuration = configuration.clone
 

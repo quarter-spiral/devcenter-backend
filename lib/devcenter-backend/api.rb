@@ -99,8 +99,9 @@ module Devcenter::Backend
         prevent_access! unless system_level_privileges?
       end
 
-      def developers_only!(game)
+      def developers_only!(game, options = {})
         prevent_access! unless system_level_privileges? || game.developers.include?(@token_owner['uuid'])
+        prevent_access! if options[:no_system_level_access] && system_level_privileges?
       end
 
       def retrieve_game(uuid)
@@ -199,6 +200,40 @@ module Devcenter::Backend
         game.remove_developer(params[:developer_uuid])
 
         game.to_hash
+      end
+
+      post '/:uuid/subscription' do
+        uuid = params[:uuid]
+        stripe_token = params[:token]
+
+        error!("Supply a token", 402) if !stripe_token || stripe_token.empty?
+
+        game = retrieve_game(uuid)
+
+        developers_only!(game, no_system_level_access: true)
+
+        status(200) and return if game.has_subscription? && !game.end_of_subscription
+        begin
+          PaymentProcessor.new.start_subscription(@token_owner, game, stripe_token)
+        rescue PaymentProcessor::Exception => e
+          error!(e.message, 402)
+        end
+        empty_body
+      end
+
+      delete '/:uuid/subscription' do
+        uuid = params[:uuid]
+        game = retrieve_game(uuid)
+
+        developers_only!(game)
+
+        error!("Not found", 404) if !game.has_subscription?
+        begin
+          PaymentProcessor.new.cancel_subscription(game)
+        rescue PaymentProcessor::Exception => e
+          error!(e.message, 402)
+        end
+        empty_body
       end
 
       get '/:uuid' do

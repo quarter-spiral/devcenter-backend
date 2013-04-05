@@ -1,5 +1,6 @@
 # 0.0.50 / Unreleased
 
+* Adds paid game subscriptions and API endpoints
 * Fixes bug when saving games with an unchanged developers list
 
 # 0.0.49 / 2013-04-02
