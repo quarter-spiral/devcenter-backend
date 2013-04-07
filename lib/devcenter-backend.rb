@@ -8,6 +8,7 @@ require "graph-client"
 require "auth-client"
 require "cache-client"
 require "cache-backend-iron-cache"
+require "tracking-client"
 
 require "devcenter-backend/version"
 require "devcenter-backend/error"

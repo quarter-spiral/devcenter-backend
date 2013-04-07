@@ -12,6 +12,8 @@ require 'devcenter-backend'
 require 'datastore-backend'
 require 'auth-backend'
 require 'graph-backend'
+require 'playercenter-backend'
+require 'playercenter-client'
 
 GRAPH_BACKEND = Graph::Backend::API.new
 module Auth::Backend

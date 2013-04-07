@@ -273,6 +273,34 @@ module Devcenter::Backend
 
         game.destroy
       end
+
+      get '/:uuid/insights' do
+        game = retrieve_game(params[:uuid])
+
+        developers_only!(game)
+        total_player_count = (connection.graph.query(token, [game.uuid], "MATCH player-[p:plays]->node0 RETURN COUNT(DISTINCT player)").first || [0]).first.to_i
+        venues = {
+          "spiral-galaxy" => "SpiralGalaxy",
+          "embedded" => "Embedded",
+          "facebook" => "Facebook"
+        }
+        venue_player_counts = Hash[venues.map do |venue_key, venue_name|
+          [venue_key, (connection.graph.query(token, [game.uuid], "MATCH player-[p:plays]->node0 WHERE p.venue#{venue_name}! = true RETURN COUNT(DISTINCT player)").first || [0]).first.to_i]
+        end]
+
+        player_counts = {
+          overall: total_player_count
+        }.merge(venue_player_counts)
+
+        impressions = connection.tracking.game.insights(game.uuid)
+
+        {
+          game.uuid => {
+            "players" => player_counts,
+            "impressions" => impressions
+          }
+        }
+      end
     end
   end
 end

@@ -1,4 +1,8 @@
-# 0.0.50
+# 0.0.51 / Unreleased
+
+* Adds game insights endpoint
+
+# 0.0.50 / 2013-04-05
 
 * Adds paid game subscriptions and API endpoints
 * Fixes bug when saving games with an unchanged developers list

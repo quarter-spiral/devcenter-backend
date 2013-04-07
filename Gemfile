@@ -20,6 +20,9 @@ group :development, :test do
   #gem 'datastore-backend', path: '../datastore-backend'
   gem 'datastore-backend', '0.0.19'
 
+  gem 'playercenter-backend', '0.0.29'
+  gem 'playercenter-client', '0.0.4'
+
   gem 'rack-client'
   gem 'rack-test'
   gem 'rake'

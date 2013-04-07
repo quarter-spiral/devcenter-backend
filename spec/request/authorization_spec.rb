@@ -104,6 +104,11 @@ describe Devcenter::Backend::API do
       must_be_forbidden(:delete, "/v1/games/#{game}/subscription", JSON.dump(token: fake_payment_token))
       must_have_subscription(game)
     end
+
+    it "cannot access insights of games" do
+      game = create_game!(@game_options)
+      must_be_forbidden(:get, "/v1/games/#{game}/insights")
+    end
   end
 
   describe "authenticated as a user" do
@@ -295,6 +300,17 @@ describe Devcenter::Backend::API do
       must_be_forbidden(:delete, "/v1/games/#{game}/subscription")
       must_have_subscription(game)
     end
+
+    it "can access insights of games you are developing" do
+      game = create_game!(@game_options)
+      must_be_allowed(:get, "/v1/games/#{game}/insights")
+    end
+
+    it "cannot access insights of any other games" do
+      make_developer!(@someone_else)
+      game = create_game!(@game_options.merge(developers: [@someone_else]))
+      must_be_forbidden(:get, "/v1/games/#{game}/insights")
+    end
   end
 
   describe "authenticated as an app with system level privileges" do
@@ -424,6 +440,11 @@ describe Devcenter::Backend::API do
         client.put "/v1/games/#{game}", {}, JSON.dump(developers: [@someone_else])
       end
       must_be_allowed(:delete, "/v1/games/#{game}/subscription")
+    end
+
+    it "can access game insights" do
+      game = create_game!(@game_options)
+      must_be_allowed(:get, "/v1/games/#{game}/insights")
     end
   end
 end

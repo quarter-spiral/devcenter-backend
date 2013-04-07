@@ -35,6 +35,24 @@ ENV['QS_AUTH_BACKEND_URL'] = 'http://auth-backend.dev'
 API_APP  = API.new
 AUTH_APP = Auth::Backend::App.new(test: true)
 
+module Playercenter::Backend
+  class Connection
+    alias raw_initialize initialize
+    def initialize(*args)
+      result = raw_initialize(*args)
+
+      graph_adapter = Service::Client::Adapter::Faraday.new(adapter: [:rack, GRAPH_BACKEND])
+      @graph.client.raw.adapter = graph_adapter
+
+      devcenter_adapter = Service::Client::Adapter::Faraday.new(adapter: [:rack, API_APP])
+      @devcenter.client.raw.adapter = devcenter_adapter
+
+      result
+    end
+  end
+end
+
+
 module Auth
   class Client
     alias raw_initialize initialize

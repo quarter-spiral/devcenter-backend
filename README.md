@@ -322,6 +322,79 @@ Empty
 
 Status code 200 if subscription was canceled. 404 if the game has no subscription.
 
+#### Game insights
+
+Get a bunch of statistics for a game
+
+##### Request
+
+**GET** ``/games/:UUID:/insights``
+
+###### Parameters
+
+- **UUID** [REQUIRED]: The UUID of the game you want to subscripe to
+
+
+##### Response
+
+A JSON object like this:
+
+```javascript
+{
+  "some-uuid": {
+    "players": {
+      "overall": 2342,
+      "facebook": 1001,
+      "spiral-galaxy": 46,
+      "embedded": 100
+    },
+    "impressions": {
+      "overall": {
+        "logged_in": {
+          total: 1031,
+          today: 24,
+          week: 35,
+          month: 89,
+          rolling_30_days: [34, 13, 10, 11, 25, 35, …]
+        },
+        "anonymous": {
+          total: 342424,
+          today: 325,
+          week: 2344,
+          month: 7455,
+          year: 10433,
+          rolling_30_days: [430, 324, 110, 111, 315, 370, …]
+        }
+      },
+      "spiral-galaxy": {
+        "logged_in": {
+          total: 301,
+          today: 5,
+          week: 10,
+          month: 50,
+          rolling_30_days: [14, 17, 10, 21, 5, 3, …]
+        },
+        "anonymous": {
+          total: 4563,
+          today: 79,
+          week: 150,
+          month: 353,
+          year: 2546,
+          rolling_30_days: [280, 100, 123, 461, 18, 210, …]
+        }
+      },
+      "facebook": {
+        …
+      },
+      "embedded": {
+        …
+      }
+    }
+  }
+}
+```
+
+
 ## Additional Info
 
 ### Game Types
