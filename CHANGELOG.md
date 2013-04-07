@@ -1,4 +1,4 @@
-# 0.0.52 / Unreleased
+# 0.0.52 / 2013-04-07
 
 * Fixes bug when saving games
 
