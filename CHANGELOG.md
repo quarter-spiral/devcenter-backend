@@ -1,4 +1,4 @@
-# 0.0.51 / Unreleased
+# 0.0.51 / 2013-04-07
 
 * Adds game insights endpoint
 
