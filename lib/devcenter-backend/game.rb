@@ -126,8 +126,7 @@ module Devcenter::Backend
     end
 
     def update_from_hash(hash)
-      unassignable_keys = hash.keys.select {|k| !MASS_ASSIGNABLE_ATTRIBUTES.include?(k.to_sym)}
-      raise Error::ValidationError.new("Can not mass update: #{unassignable_keys.join(',')}!") unless unassignable_keys.empty?
+      hash = hash.reject {|k, v| !MASS_ASSIGNABLE_ATTRIBUTES.include?(k.to_sym)}
       raw_update_from_hash(hash)
     end
 

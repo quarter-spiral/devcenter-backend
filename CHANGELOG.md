@@ -1,3 +1,7 @@
+# 0.0.52 / Unreleased
+
+* Fixes bug when saving games
+
 # 0.0.51 / 2013-04-07
 
 * Adds game insights endpoint
