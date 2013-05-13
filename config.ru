@@ -12,4 +12,7 @@ require 'devcenter-backend'
 require 'ping-middleware'
 use Ping::Middleware
 
+require 'rack/crossdomain/xml'
+use Rack::Crossdomain::Xml::Middleware
+
 run Devcenter::Backend::API

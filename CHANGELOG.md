@@ -1,3 +1,7 @@
+# 0.0.53 / Unreleased
+
+* Adds ``crossdomain.xml``
+
 # 0.0.52 / 2013-04-07
 
 * Fixes bug when saving games
