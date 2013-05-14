@@ -1,4 +1,4 @@
-# 0.0.53 / Unreleased
+# 0.0.53 / 2013-05-13
 
 * Adds ``crossdomain.xml``
 
