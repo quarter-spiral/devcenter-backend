@@ -29,4 +29,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'stripe', '~> 1.7.11'
   gem.add_dependency 'tracking-client', '>= 0.0.6'
   gem.add_dependency 'rack-crossdomain-xml', '>= 0.0.1'
+  gem.add_dependency 'rack-fake-method', '~> 0.0.1'
 end

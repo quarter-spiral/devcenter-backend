@@ -15,4 +15,7 @@ use Ping::Middleware
 require 'rack/crossdomain/xml'
 use Rack::Crossdomain::Xml::Middleware
 
+require 'rack/fake_method'
+use Rack::FakeMethod::Middleware
+
 run Devcenter::Backend::API
