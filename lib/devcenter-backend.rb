@@ -10,6 +10,9 @@ require "cache-client"
 require "cache-backend-iron-cache"
 require "tracking-client"
 
+require 'qs/request/tracker'
+require 'qs/request/tracker/service_client_extension'
+
 require "devcenter-backend/version"
 require "devcenter-backend/error"
 require "devcenter-backend/utils"

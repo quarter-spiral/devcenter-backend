@@ -18,4 +18,5 @@ use Rack::Crossdomain::Xml::Middleware
 require 'rack/fake_method'
 use Rack::FakeMethod::Middleware
 
+use Qs::Request::Tracker::Middleware
 run Devcenter::Backend::API
