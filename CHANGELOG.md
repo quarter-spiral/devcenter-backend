@@ -1,3 +1,7 @@
+# 0.0.55 / Unreleased
+
+* Updates client dependencies
+
 # 0.0.54 / 2013-05-23
 
 * Makes it possible to fake HTTP methods through a header
