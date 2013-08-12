@@ -21,7 +21,7 @@ use Rack::FakeMethod::Middleware
 require 'raven'
 require 'qs/request/tracker/raven_processor'
 Raven.configure do |config|
-  config.tags = {'app' => 'auth-backend'}
+  config.tags = {'app' => 'devcenter-backend'}
   config.processors = [Raven::Processor::SanitizeData, Qs::Request::Tracker::RavenProcessor]
 end
 use Raven::Rack

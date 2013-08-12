@@ -1,3 +1,7 @@
+# 0.0.56 / Unreleased
+
+* Fixed sentry app id
+
 # 0.0.55 / 2013-08-12
 
 * Adds getsentry.com exception tracking
